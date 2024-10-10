@@ -183,11 +183,40 @@ public class Store {
         }
     }
 
-    public static void checkOut(ArrayList<Product> cart, double totalAmount) {
+    public static void checkOut(ArrayList<Product> cart, double totalAmount, Scanner scanner) {
         // This method should calculate the total cost of all items in the cart,
         // and display a summary of the purchase to the user. The method should
         // prompt the user to confirm the purchase, and deduct the total cost
         // from their account if they confirm.
+        if (cart.isEmpty()) {
+            System.out.println("Your cart is empty. Please add items to your cart before checking out.\n");
+            return;
+        }
+
+        // Display a summary of the purchase
+        totalAmount = 0.0;
+        System.out.println("\nSummary of your purchase:");
+        for (Product product : cart) {
+            System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: $" + product.price());
+            totalAmount += product.price();
+        }
+
+        // Display the total amount
+        System.out.printf("Total amount due: $%.2f\n", totalAmount);
+
+        // Prompt user for confirmation
+        System.out.print("\nEnter amount of cash for purchase: ");
+
+        double paymentAmount = scanner.nextDouble();
+        scanner.nextLine();
+
+        if (paymentAmount >= totalAmount) {
+            // Successful payment, handle receipt here
+
+            cart.clear();
+        } else {
+            System.out.println("Purchase canceled: Insufficient Funds");
+        }
     }
 
     public static Product findProductById(String id, ArrayList<Product> inventory) {
