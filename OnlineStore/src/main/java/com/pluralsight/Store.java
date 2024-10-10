@@ -8,18 +8,22 @@ import java.util.Scanner;
 
 public class Store {
 
+    private static final String PRODUCTS_PATH = "products.csv";
+    private static final ArrayList<Product> inventory = new ArrayList<>();
+    private static final ArrayList<Product> cart = new ArrayList<>();
+    private static final Scanner scanner = new Scanner(System.in);
     private static double totalAmount;
     public static void main(String[] args) {
         // Initialize variables
-        ArrayList<Product> inventory = new ArrayList<>();
-        ArrayList<Product> cart = new ArrayList<>();
+
+
         totalAmount = 0.0;
 
         // Load inventory from CSV file
-        loadInventory("products.csv", inventory);
+        loadInventory(PRODUCTS_PATH);
 
         // Create scanner to read user input
-        Scanner scanner = new Scanner(System.in);
+
         int choice = -1;
 
         // Display menu and get user choice until they choose to exit
@@ -34,15 +38,15 @@ public class Store {
 
             // Call the appropriate method based on user choice
             switch (choice) {
-                case 1 -> displayProducts(inventory, cart, scanner);
-                case 2 -> displayCart(cart, scanner);
+                case 1 -> displayProducts();
+                case 2 -> displayCart();
                 case 3 -> System.out.println("\nThank you for shopping with us!");
                 default -> System.out.println("Invalid choice!");
             }
         }
     }
 
-    public static void loadInventory(String fileName, ArrayList<Product> inventory) {
+    public static void loadInventory(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -68,7 +72,7 @@ public class Store {
         // price is a double value representing the price of the product
     }
 
-    public static void displayProducts(ArrayList<Product> inventory, ArrayList<Product> cart, Scanner scanner) {
+    public static void displayProducts() {
         // This method should display a list of products from the inventory,
         // and prompt the user to add items to their cart. The method should
         // prompt the user to enter the ID of the product they want to add to
@@ -92,8 +96,8 @@ public class Store {
                 System.out.println("\nEnter the ID to search for: ");
                 String searchIn = scanner.nextLine().trim();
                 try{
-                    if(findProductById(searchIn,inventory)!=null){
-                        System.out.println(findProductById(searchIn,inventory));
+                    if(findProductById(searchIn)!=null){
+                        System.out.println(findProductById(searchIn));
                     }else{
                         System.out.println("\nID Not Found");
                     }
@@ -128,7 +132,7 @@ public class Store {
 
     }
 
-    public static void displayCart(ArrayList<Product> cart, Scanner scanner) {
+    public static void displayCart() {
         // This method should display the items in the cart ArrayList, along
         // with the total cost of all items in the cart. The method should
         // prompt the user to remove items from their cart by entering the ID
@@ -157,7 +161,7 @@ public class Store {
         while (!input.equalsIgnoreCase("E")) {  // Exit to main menu
             if(input.equalsIgnoreCase("C")){
                 // Checkout cart from here
-                checkOut(cart, scanner);
+                checkOut();
 
             }else{
                 try {
@@ -196,7 +200,7 @@ public class Store {
         }
     }
 
-    public static void checkOut(ArrayList<Product> cart, Scanner scanner) {
+    public static void checkOut() {
         // This method should calculate the total cost of all items in the cart,
         // and display a summary of the purchase to the user. The method should
         // prompt the user to confirm the purchase, and deduct the total cost
@@ -234,7 +238,7 @@ public class Store {
         }
     }
 
-    public static Product findProductById(String id, ArrayList<Product> inventory) {
+    public static Product findProductById(String id) {
         // This method should search the inventory ArrayList for a product with
         // the specified ID, and return the corresponding com.pluralsight.Product object. If
         // no product with the specified ID is found, the method should return
