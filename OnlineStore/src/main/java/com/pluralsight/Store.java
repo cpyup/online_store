@@ -33,18 +33,10 @@ public class Store {
 
             // Call the appropriate method based on user choice
             switch (choice) {
-                case 1:
-                    displayProducts(inventory, cart, scanner);
-                    break;
-                case 2:
-                    displayCart(cart, scanner, totalAmount);
-                    break;
-                case 3:
-                    System.out.println("\nThank you for shopping with us!");
-                    break;
-                default:
-                    System.out.println("Invalid choice!");
-                    break;
+                case 1 -> displayProducts(inventory, cart, scanner);
+                case 2 -> displayCart(cart, scanner, totalAmount);
+                case 3 -> System.out.println("\nThank you for shopping with us!");
+                default -> System.out.println("Invalid choice!");
             }
         }
     }
@@ -97,9 +89,13 @@ public class Store {
         while (!input.equalsIgnoreCase("E")) {
             if(input.equalsIgnoreCase("S")){
                 System.out.println("\nEnter the ID to search for: ");
-                String searchIn = scanner.nextLine();
+                String searchIn = scanner.nextLine().trim();
                 try{
-                    System.out.println(findProductById(searchIn,inventory));
+                    if(findProductById(searchIn,inventory)!=null){
+                        System.out.println(findProductById(searchIn,inventory));
+                    }else{
+                        System.out.println("\nID Not Found");
+                    }
                 } catch (Exception e){
                     System.out.println("\nID Not Found");
                 }
@@ -146,7 +142,7 @@ public class Store {
         System.out.println("Your cart items:");
         for (Product product : cart) {
             totalAmount += product.price();
-            System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: $" + product.price());
+            System.out.println(product);
         }
 
         // Display the total amount
@@ -160,7 +156,7 @@ public class Store {
         while (!input.equalsIgnoreCase("E")) {  // Exit to main menu
             if(input.equalsIgnoreCase("C")){
                 // Checkout cart from here
-                checkOut(cart,totalAmount,scanner);
+                checkOut(cart, scanner);
 
             }else{
                 try {
@@ -181,7 +177,7 @@ public class Store {
                         System.out.println("\nNo product found with ID: " + input + " found in cart.");
                     }
 
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                     System.out.println("\nInvalid input. Please enter a valid product ID or 'done'.");
                 }
             }
@@ -189,7 +185,7 @@ public class Store {
             // Display updated cart and total
             System.out.println("\nCurrent cart items:");
             for (Product product : cart) {
-                System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: " + product.price());
+                System.out.println(product);
             }
             System.out.printf("\nTotal amount: $%.2f", totalAmount);
 
@@ -199,7 +195,7 @@ public class Store {
         }
     }
 
-    public static void checkOut(ArrayList<Product> cart, double totalAmount, Scanner scanner) {
+    public static void checkOut(ArrayList<Product> cart, Scanner scanner) {
         // This method should calculate the total cost of all items in the cart,
         // and display a summary of the purchase to the user. The method should
         // prompt the user to confirm the purchase, and deduct the total cost
@@ -210,10 +206,10 @@ public class Store {
         }
 
         // Display a summary of the purchase
-        totalAmount = 0.0;
+        double totalAmount = 0.0;
         System.out.println("\nSummary of your purchase:");
         for (Product product : cart) {
-            System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: $" + product.price());
+            System.out.println(product);
             totalAmount += product.price();
         }
 
@@ -230,6 +226,7 @@ public class Store {
             // Successful payment, handle receipt here
 
             cart.clear();
+
         } else {
             System.out.println("Purchase canceled: Insufficient Funds");
         }
@@ -240,6 +237,15 @@ public class Store {
         // the specified ID, and return the corresponding com.pluralsight.Product object. If
         // no product with the specified ID is found, the method should return
         // null.
+        try {
+            for (Product product : inventory) {
+                if (product.id().equalsIgnoreCase(id)) {
+                    return product;
+                }
+            }
+        }catch (Exception e){
+            System.out.println("\nError searching for ID: "+e);
+        }
         return null;
     }
 }
