@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class Store {
 
@@ -144,17 +145,24 @@ public class Store {
         }
 
         // Display the items in the cart
+        HashMap<Product,Integer> currentCounts = new HashMap<>();
+
         System.out.println("\nYour cart items:");
         for (Product product : cart) {
             totalAmount += product.price();
-            System.out.println(product);
+            if(currentCounts.containsKey(product)){
+                currentCounts.put(product,currentCounts.get(product)+1);
+            }else{
+                currentCounts.put(product,1);
+            }
         }
+
+        currentCounts.forEach((key,value) -> System.out.println("[x"+value+"] "+key.toString()));  // For displaying multiple items as count
 
         // Display the total amount
         System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
 
         // Prompt user for ID of the product to remove
-        //System.out.print("\nTo remove a product from your cart, enter the ID of the product you want to remove\nEnter 'E' to exit to main menu: ");
         System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
         String input = scanner.nextLine().trim();
 
