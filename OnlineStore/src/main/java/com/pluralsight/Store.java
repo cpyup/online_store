@@ -23,7 +23,7 @@ public class Store {
 
         // Display menu and get user choice until they choose to exit
         while (choice != 3) {
-            System.out.println("Welcome to the Online com.pluralsight.Store!");
+            System.out.println("\nWelcome to the Online com.pluralsight.Store!");
             System.out.println("1. Show Products");
             System.out.println("2. Show Cart");
             System.out.println("3. Exit");
@@ -55,7 +55,7 @@ public class Store {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split("\\|");
                 if (values.length == 3) {
-                    int id = Integer.parseInt(values[0].trim());
+                    String id = values[0].trim();
                     String name = values[1].trim();
                     double price = Double.parseDouble(values[2].trim());
                     inventory.add(new Product(id, name, price));
@@ -81,6 +81,44 @@ public class Store {
         // prompt the user to enter the ID of the product they want to add to
         // their cart. The method should
         // add the selected product to the cart ArrayList.
+        if (inventory.isEmpty()) {
+            System.out.println("\nThe inventory is empty.");
+            return;
+        }
+
+        System.out.println("\nAvailable Products:");
+        for (Product product : inventory) {
+            System.out.println(product);
+        }
+
+        System.out.print("\nEnter the ID of the product you want to add to your cart (or 'E' to exit to main menu): ");
+        String input = scanner.nextLine();
+
+        while (!input.equalsIgnoreCase("E")) {
+            try {
+                String productId = input.trim();
+                Product selectedProduct = null;
+                for (Product product : inventory) {
+                    if (product.id().equalsIgnoreCase(productId)) {
+                        selectedProduct = product;
+                        break;
+                    }
+                }
+
+                if (selectedProduct != null) {
+                    cart.add(selectedProduct);
+                    System.out.println(selectedProduct.name() + " has been added to your cart.");
+                } else {
+                    System.out.println("Product with ID " + productId + " not found.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\nInvalid input. Please enter a valid product ID (or 'E' to exit to main menu)");
+            }
+
+            System.out.print("\nEnter another ID to add to your cart (or 'E' to exit to main menu): ");
+            input = scanner.nextLine();
+        }
+
     }
 
     public static void displayCart(ArrayList<Product> cart, Scanner scanner, double totalAmount) {
