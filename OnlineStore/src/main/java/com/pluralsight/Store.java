@@ -10,8 +10,8 @@ public class Store {
 
     public static void main(String[] args) {
         // Initialize variables
-        ArrayList<Product> inventory = new ArrayList<Product>();
-        ArrayList<Product> cart = new ArrayList<Product>();
+        ArrayList<Product> inventory = new ArrayList<>();
+        ArrayList<Product> cart = new ArrayList<>();
         double totalAmount = 0.0;
 
         // Load inventory from CSV file
@@ -96,7 +96,13 @@ public class Store {
 
         while (!input.equalsIgnoreCase("E")) {
             if(input.equalsIgnoreCase("S")){
-
+                System.out.println("\nEnter the ID to search for: ");
+                String searchIn = scanner.nextLine();
+                try{
+                    System.out.println(findProductById(searchIn,inventory));
+                } catch (Exception e){
+                    System.out.println("\nID Not Found");
+                }
             }else{
                 try {
                     String productId = input.trim();
@@ -156,7 +162,7 @@ public class Store {
 
                 // Searching cart to remove indicated item, update the totalAmount for removed
                 for (Product product : cart) {
-                    if (product.id().equalsIgnoreCase(product.id())) {
+                    if (product.id().equalsIgnoreCase(input)) {
                         totalAmount -= product.price();
                         cart.remove(product);
                         found = true;
