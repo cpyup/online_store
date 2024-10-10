@@ -118,9 +118,9 @@ public class Store {
 
                     if (selectedProduct != null) {
                         cart.add(selectedProduct);
-                        System.out.println(selectedProduct.name() + " has been added to your cart.");
+                        System.out.println("\n" + selectedProduct.name() + " has been added to your cart.");
                     } else {
-                        System.out.println("Product with ID '" + productId + "' not found.");
+                        System.out.println("\nProduct with ID '" + productId + "' not found.");
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("\nInvalid input. Please enter a valid product ID,'S' to search, or 'E' to exit to main menu:");
@@ -144,25 +144,8 @@ public class Store {
             return;
         }
 
-        // Display the items in the cart
-        HashMap<Product,Integer> currentCounts = new HashMap<>();
+        printCart();
 
-        System.out.println("\nYour cart items:");
-        for (Product product : cart) {
-            totalAmount += product.price();
-            if(currentCounts.containsKey(product)){
-                currentCounts.put(product,currentCounts.get(product)+1);
-            }else{
-                currentCounts.put(product,1);
-            }
-        }
-
-        currentCounts.forEach((key,value) -> System.out.println("[x"+value+"] "+key.toString()));  // For displaying multiple items as count
-
-        // Display the total amount
-        System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
-
-        // Prompt user for ID of the product to remove
         System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
         String input = scanner.nextLine().trim();
 
@@ -170,12 +153,12 @@ public class Store {
             if(input.equalsIgnoreCase("C")){
                 // Checkout cart from here
                 checkOut();
-
+                return;
             }else{
                 try {
+                    // Searching cart to remove indicated item, update the totalAmount for removed
                     boolean found = false;
 
-                    // Searching cart to remove indicated item, update the totalAmount for removed
                     for (Product product : cart) {
                         if (product.id().equalsIgnoreCase(input)) {
                             totalAmount -= product.price();
@@ -191,21 +174,41 @@ public class Store {
                     }
 
                 } catch (Exception e) {
-                    System.out.println("\nInvalid input. Please enter a valid product ID or 'E' to exit.");
+                    System.out.println("\nError: Invalid Input");
                 }
-            }
 
-            // Display updated cart and total
-            System.out.println("\nCurrent cart items:");
-            for (Product product : cart) {
-                System.out.println(product);
-            }
-            System.out.printf("\nTotal amount: $%.2f", totalAmount);
+                if (cart.isEmpty()) {
+                    System.out.println("\nYour cart is empty.");
+                    return;
+                }
 
-            // Prompt for next input
-            System.out.print("\nEnter the ID of the product you want to remove, 'C' to checkout, or 'E' to exit: ");  // Modify to check if cart is empty before prompt
-            input = scanner.nextLine();
+                printCart();
+
+                System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
+                input = scanner.nextLine().trim();
+            }
         }
+    }
+
+    public static void printCart(){
+        // Display the items in the cart
+        HashMap<Product,Integer> currentCounts = new HashMap<>();
+        totalAmount = 0;  // Reset current total before adding from cart
+
+        System.out.println("\nYour cart items:");
+        for (Product product : cart) {
+            totalAmount += product.price();
+            if(currentCounts.containsKey(product)){
+                currentCounts.put(product,currentCounts.get(product)+1);
+            }else{
+                currentCounts.put(product,1);
+            }
+        }
+
+        currentCounts.forEach((key,value) -> System.out.println("[x"+value+"] "+key.toString()));  // For displaying multiple items as count
+
+        // Display the total amount
+        System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
     }
 
     public static void checkOut() {
@@ -218,17 +221,7 @@ public class Store {
             return;
         }
 
-        totalAmount = 0.0;  // Reset the total before displaying
-
-        // Display a summary of the purchase
-        System.out.println("\nSummary of your purchase:");
-        for (Product product : cart) {
-            System.out.println(product);
-            totalAmount += product.price();
-        }
-
-        // Display the total amount
-        System.out.printf("Total amount due: $%.2f\n", totalAmount);
+        printCart();
 
         // Prompt user for confirmation
         System.out.print("\nEnter amount of cash for purchase: ");
@@ -240,7 +233,8 @@ public class Store {
             // Successful payment, handle receipt here
             totalAmount = 0.0;
             cart.clear();
-
+            System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
+            scanner.nextLine();
         } else {
             System.out.println("\nPurchase canceled: Insufficient Funds");
         }
