@@ -127,6 +127,60 @@ public class Store {
         // prompt the user to remove items from their cart by entering the ID
         // of the product they want to remove. The method should update the cart ArrayList and totalAmount
         // variable accordingly.
+        if (cart.isEmpty()) {
+            System.out.println("\nYour cart is empty.");
+            return;
+        }
+
+        // Display the items in the cart
+        System.out.println("Your cart items:");
+        for (Product product : cart) {
+            totalAmount += product.price();
+            System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: $" + product.price());
+        }
+
+        // Display the total amount
+        System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
+
+        // Prompt user for ID of the product to remove
+        System.out.print("\nTo remove a product from your cart, enter the ID of the product you want to remove\nEnter 'done' to return to main menu: ");
+        String input = scanner.nextLine();
+
+        while (!input.equalsIgnoreCase("done")) {
+            try {
+                int idToRemove = Integer.parseInt(input);
+                boolean found = false;
+
+                // Searching cart to remove indicated item, update the totalAmount for removed
+                for (Product product : cart) {
+                    if (product.price() == idToRemove) {
+                        totalAmount -= product.price();
+                        cart.remove(product);
+                        found = true;
+                        System.out.println("Product removed from cart.");
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    System.out.println("No product found with ID: " + idToRemove + " found in cart.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid product ID or 'done'.");
+            }
+
+            // Display updated cart and total
+            System.out.println("Updated cart items:");
+            for (Product product : cart) {
+                System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: " + product.price());
+            }
+            System.out.printf("Total amount: $%.2f\n", totalAmount);
+
+            // Prompt for next input
+            System.out.print("Enter the ID of the product you want to remove, or type 'done' to finish: ");  // Modify to check if cart is empty before prompt
+            input = scanner.nextLine();
+        }
     }
 
     public static void checkOut(ArrayList<Product> cart, double totalAmount) {
