@@ -15,8 +15,8 @@ public class Store {
     private static final Scanner SCANNER = new Scanner(System.in);
     private static double totalAmount;
     public static void main(String[] args) {
-        totalAmount = 0.0;
         loadInventory(PRODUCTS_PATH);
+        totalAmount = 0.0;
 
         int choice = -1;
 
@@ -60,53 +60,39 @@ public class Store {
         }
 
         System.out.println("\nAvailable Products:");
-        for (Product product : INVENTORY) {
-            System.out.println(product);
-        }
+        INVENTORY.forEach(System.out::println);
+        handleProductInput();
+    }
 
-        System.out.print("\nOptions:\n\tEnter ID of item to add it to your cart\n\tEnter 'S' to search for an item\n\tEnter 'E' to exit to the main menu\n");
-        String input = SCANNER.nextLine();
+    private static void handleProductInput() {
+        String input;
+        do {
+            System.out.print("\nEnter product ID to add to your cart, 'S' to search, or 'E' to exit: ");
+            input = SCANNER.nextLine().trim();
 
-        while (!input.equalsIgnoreCase("E")) {
-            if(input.equalsIgnoreCase("S")){
-                System.out.println("\nEnter the ID to search for: ");
-                String searchIn = SCANNER.nextLine().trim();
-                try{
-                    if(findProductById(searchIn)!=null){
-                        System.out.println(findProductById(searchIn));
-                    }else{
-                        System.out.println("\nID Not Found");
-                    }
-                } catch (Exception e){
-                    System.out.println("\nID Not Found");
-                }
-            }else{
-                try {
-                    String productId = input.trim();
-                    Product selectedProduct = null;
-
-                    for (Product product : INVENTORY) {
-                        if (product.id().equalsIgnoreCase(productId)) {
-                            selectedProduct = product;
-                            break;
-                        }
-                    }
-
-                    if (selectedProduct != null) {
-                        CART.add(selectedProduct);
-                        System.out.println("\n" + selectedProduct.name() + " has been added to your cart.");
-                    } else {
-                        System.out.println("\nProduct with ID '" + productId + "' not found.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("\nInvalid input. Please enter a valid product ID,'S' to search, or 'E' to exit to main menu:");
-                }
+            if ("S".equalsIgnoreCase(input)) {
+                searchProduct();
+            } else if (!"E".equalsIgnoreCase(input)) {
+                addToCart(input);
             }
+        } while (!"E".equalsIgnoreCase(input));
+    }
 
-            System.out.print("\nEnter product ID to add it to your cart, 'S' to search, or 'E' to exit to main menu: ");
-            input = SCANNER.nextLine();
+    private static void searchProduct() {
+        System.out.println("\nEnter the ID to search for: ");
+        String searchIn = SCANNER.nextLine().trim();
+        Product foundProduct = findProductById(searchIn);
+        System.out.println(foundProduct != null ? foundProduct : "\nID Not Found");
+    }
+
+    private static void addToCart(String productId) {
+        Product product = findProductById(productId);
+        if (product != null) {
+            CART.add(product);
+            System.out.println("\n" + product.name() + " has been added to your cart.");
+        } else {
+            System.out.println("\nProduct with ID '" + productId + "' not found.");
         }
-
     }
 
     public static void displayCart() {
@@ -116,53 +102,36 @@ public class Store {
         }
 
         printCart();
+        handleCartInput();
+    }
 
-        System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
-        String input = SCANNER.nextLine().trim();
-
-        while (!input.equalsIgnoreCase("E")) {  // Exit to main menu
-            if(input.equalsIgnoreCase("C")){
-                // Checkout cart from here
+    private static void handleCartInput() {
+        String input;
+        do {
+            System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
+            input = SCANNER.nextLine().trim();
+            if ("C".equalsIgnoreCase(input)) {
                 checkOut();
                 return;
-            }else{
-                try {
-                    // Searching cart to remove indicated item, update the totalAmount for removed
-                    boolean found = false;
-
-                    for (Product product : CART) {
-                        if (product.id().equalsIgnoreCase(input)) {
-                            totalAmount -= product.price();
-                            CART.remove(product);
-                            found = true;
-                            System.out.println("\nProduct removed from cart.");
-                            break;
-                        }
-                    }
-
-                    if (!found) {
-                        System.out.println("\nNo product found with ID: " + input + " found in cart.");
-                    }
-
-                } catch (Exception e) {
-                    System.out.println("\nError: Invalid Input");
-                }
-
-                if (CART.isEmpty()) {
-                    System.out.println("\nYour cart is empty.");
-                    return;
-                }
-
-                printCart();
-
-                System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
-                input = SCANNER.nextLine().trim();
+            } else if ("R".equalsIgnoreCase(input)) {
+                removeFromCart();
             }
+        } while (!"E".equalsIgnoreCase(input));
+    }
+
+    private static void removeFromCart() {
+        System.out.print("\nEnter product ID to remove: ");
+        String productId = SCANNER.nextLine().trim();
+        boolean removed = CART.removeIf(product -> product.id().equalsIgnoreCase(productId));
+        if (removed) {
+            System.out.println("\nProduct removed from cart.");
+        } else {
+            System.out.println("\nNo product found with ID: " + productId + " found in cart.");
         }
+        printCart();
     }
 
     public static void printCart(){
-        // Display the items in the cart
         HashMap<Product,Integer> currentCounts = new HashMap<>();
         totalAmount = 0;  // Reset current total before adding from cart
 
@@ -208,15 +177,9 @@ public class Store {
     }
 
     public static Product findProductById(String id) {
-        try {
-            for (Product product : INVENTORY) {
-                if (product.id().equalsIgnoreCase(id)) {
-                    return product;
-                }
-            }
-        }catch (Exception e){
-            System.out.println("\nError searching for ID: "+e);
-        }
-        return null;
+        return INVENTORY.stream()
+                .filter(product -> product.id().equalsIgnoreCase(id))
+                .findFirst()
+                .orElse(null);
     }
 }
