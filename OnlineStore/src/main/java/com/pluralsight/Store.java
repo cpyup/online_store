@@ -40,7 +40,7 @@ public class Store {
                     displayCart(cart, scanner, totalAmount);
                     break;
                 case 3:
-                    System.out.println("Thank you for shopping with us!");
+                    System.out.println("\nThank you for shopping with us!");
                     break;
                 default:
                     System.out.println("Invalid choice!");
@@ -153,30 +153,37 @@ public class Store {
         System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
 
         // Prompt user for ID of the product to remove
-        System.out.print("\nTo remove a product from your cart, enter the ID of the product you want to remove\nEnter 'done' to return to main menu: ");
+        //System.out.print("\nTo remove a product from your cart, enter the ID of the product you want to remove\nEnter 'E' to exit to main menu: ");
+        System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
         String input = scanner.nextLine().trim();
 
-        while (!input.equalsIgnoreCase("done")) {
-            try {
-                boolean found = false;
+        while (!input.equalsIgnoreCase("E")) {  // Exit to main menu
+            if(input.equalsIgnoreCase("C")){
+                // Checkout cart from here
+                checkOut(cart,totalAmount,scanner);
 
-                // Searching cart to remove indicated item, update the totalAmount for removed
-                for (Product product : cart) {
-                    if (product.id().equalsIgnoreCase(input)) {
-                        totalAmount -= product.price();
-                        cart.remove(product);
-                        found = true;
-                        System.out.println("\nProduct removed from cart.");
-                        break;
+            }else{
+                try {
+                    boolean found = false;
+
+                    // Searching cart to remove indicated item, update the totalAmount for removed
+                    for (Product product : cart) {
+                        if (product.id().equalsIgnoreCase(input)) {
+                            totalAmount -= product.price();
+                            cart.remove(product);
+                            found = true;
+                            System.out.println("\nProduct removed from cart.");
+                            break;
+                        }
                     }
-                }
 
-                if (!found) {
-                    System.out.println("\nNo product found with ID: " + input + " found in cart.");
-                }
+                    if (!found) {
+                        System.out.println("\nNo product found with ID: " + input + " found in cart.");
+                    }
 
-            } catch (NumberFormatException e) {
-                System.out.println("\nInvalid input. Please enter a valid product ID or 'done'.");
+                } catch (NumberFormatException e) {
+                    System.out.println("\nInvalid input. Please enter a valid product ID or 'done'.");
+                }
             }
 
             // Display updated cart and total
