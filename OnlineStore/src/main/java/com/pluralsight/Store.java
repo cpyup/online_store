@@ -8,11 +8,12 @@ import java.util.Scanner;
 
 public class Store {
 
+    private static double totalAmount;
     public static void main(String[] args) {
         // Initialize variables
         ArrayList<Product> inventory = new ArrayList<>();
         ArrayList<Product> cart = new ArrayList<>();
-        double totalAmount = 0.0;
+        totalAmount = 0.0;
 
         // Load inventory from CSV file
         loadInventory("products.csv", inventory);
@@ -34,7 +35,7 @@ public class Store {
             // Call the appropriate method based on user choice
             switch (choice) {
                 case 1 -> displayProducts(inventory, cart, scanner);
-                case 2 -> displayCart(cart, scanner, totalAmount);
+                case 2 -> displayCart(cart, scanner);
                 case 3 -> System.out.println("\nThank you for shopping with us!");
                 default -> System.out.println("Invalid choice!");
             }
@@ -127,7 +128,7 @@ public class Store {
 
     }
 
-    public static void displayCart(ArrayList<Product> cart, Scanner scanner, double totalAmount) {
+    public static void displayCart(ArrayList<Product> cart, Scanner scanner) {
         // This method should display the items in the cart ArrayList, along
         // with the total cost of all items in the cart. The method should
         // prompt the user to remove items from their cart by entering the ID
@@ -139,7 +140,7 @@ public class Store {
         }
 
         // Display the items in the cart
-        System.out.println("Your cart items:");
+        System.out.println("\nYour cart items:");
         for (Product product : cart) {
             totalAmount += product.price();
             System.out.println(product);
@@ -178,7 +179,7 @@ public class Store {
                     }
 
                 } catch (Exception e) {
-                    System.out.println("\nInvalid input. Please enter a valid product ID or 'done'.");
+                    System.out.println("\nInvalid input. Please enter a valid product ID or 'E' to exit.");
                 }
             }
 
@@ -190,7 +191,7 @@ public class Store {
             System.out.printf("\nTotal amount: $%.2f", totalAmount);
 
             // Prompt for next input
-            System.out.print("\nEnter the ID of the product you want to remove, or type 'done' to finish: ");  // Modify to check if cart is empty before prompt
+            System.out.print("\nEnter the ID of the product you want to remove, 'C' to checkout, or 'E' to exit: ");  // Modify to check if cart is empty before prompt
             input = scanner.nextLine();
         }
     }
@@ -201,12 +202,13 @@ public class Store {
         // prompt the user to confirm the purchase, and deduct the total cost
         // from their account if they confirm.
         if (cart.isEmpty()) {
-            System.out.println("Your cart is empty. Please add items to your cart before checking out.\n");
+            System.out.println("\nYour cart is empty. Please add items to your cart before checking out.\n");
             return;
         }
 
+        totalAmount = 0.0;  // Reset the total before displaying
+
         // Display a summary of the purchase
-        double totalAmount = 0.0;
         System.out.println("\nSummary of your purchase:");
         for (Product product : cart) {
             System.out.println(product);
@@ -224,11 +226,11 @@ public class Store {
 
         if (paymentAmount >= totalAmount) {
             // Successful payment, handle receipt here
-
+            totalAmount = 0.0;
             cart.clear();
 
         } else {
-            System.out.println("Purchase canceled: Insufficient Funds");
+            System.out.println("\nPurchase canceled: Insufficient Funds");
         }
     }
 
