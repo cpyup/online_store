@@ -1,4 +1,9 @@
 package com.pluralsight;
 
-public class Product {
+public record Product(int id, String name, double price) {
+
+    @Override
+    public String toString() {
+        return "id: " + id + ", name: '" + name + "', price: " + price;
+    }
 }
