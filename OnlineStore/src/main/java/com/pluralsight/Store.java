@@ -91,31 +91,35 @@ public class Store {
             System.out.println(product);
         }
 
-        System.out.print("\nEnter the ID of the product you want to add to your cart (or 'E' to exit to main menu): ");
+        System.out.print("\nOptions:\n\tEnter ID of item to add it to your cart\n\tEnter 'S' to search for an item\n\tEnter 'E' to exit to the main menu\n");
         String input = scanner.nextLine();
 
         while (!input.equalsIgnoreCase("E")) {
-            try {
-                String productId = input.trim();
-                Product selectedProduct = null;
-                for (Product product : inventory) {
-                    if (product.id().equalsIgnoreCase(productId)) {
-                        selectedProduct = product;
-                        break;
-                    }
-                }
+            if(input.equalsIgnoreCase("S")){
 
-                if (selectedProduct != null) {
-                    cart.add(selectedProduct);
-                    System.out.println(selectedProduct.name() + " has been added to your cart.");
-                } else {
-                    System.out.println("Product with ID " + productId + " not found.");
+            }else{
+                try {
+                    String productId = input.trim();
+                    Product selectedProduct = null;
+                    for (Product product : inventory) {
+                        if (product.id().equalsIgnoreCase(productId)) {
+                            selectedProduct = product;
+                            break;
+                        }
+                    }
+
+                    if (selectedProduct != null) {
+                        cart.add(selectedProduct);
+                        System.out.println(selectedProduct.name() + " has been added to your cart.");
+                    } else {
+                        System.out.println("Product with ID '" + productId + "' not found.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("\nInvalid input. Please enter a valid product ID,'S' to search, or 'E' to exit to main menu:");
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("\nInvalid input. Please enter a valid product ID (or 'E' to exit to main menu)");
             }
 
-            System.out.print("\nEnter another ID to add to your cart (or 'E' to exit to main menu): ");
+            System.out.print("\nEnter another ID to add to your cart, 'S' to search, or 'E' to exit to main menu: ");
             input = scanner.nextLine();
         }
 
@@ -144,41 +148,40 @@ public class Store {
 
         // Prompt user for ID of the product to remove
         System.out.print("\nTo remove a product from your cart, enter the ID of the product you want to remove\nEnter 'done' to return to main menu: ");
-        String input = scanner.nextLine();
+        String input = scanner.nextLine().trim();
 
         while (!input.equalsIgnoreCase("done")) {
             try {
-                int idToRemove = Integer.parseInt(input);
                 boolean found = false;
 
                 // Searching cart to remove indicated item, update the totalAmount for removed
                 for (Product product : cart) {
-                    if (product.price() == idToRemove) {
+                    if (product.id().equalsIgnoreCase(product.id())) {
                         totalAmount -= product.price();
                         cart.remove(product);
                         found = true;
-                        System.out.println("Product removed from cart.");
+                        System.out.println("\nProduct removed from cart.");
                         break;
                     }
                 }
 
                 if (!found) {
-                    System.out.println("No product found with ID: " + idToRemove + " found in cart.");
+                    System.out.println("\nNo product found with ID: " + input + " found in cart.");
                 }
 
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid product ID or 'done'.");
+                System.out.println("\nInvalid input. Please enter a valid product ID or 'done'.");
             }
 
             // Display updated cart and total
-            System.out.println("Updated cart items:");
+            System.out.println("\nCurrent cart items:");
             for (Product product : cart) {
                 System.out.println("ID: " + product.id() + ", Name: " + product.name() + ", Price: " + product.price());
             }
-            System.out.printf("Total amount: $%.2f\n", totalAmount);
+            System.out.printf("\nTotal amount: $%.2f", totalAmount);
 
             // Prompt for next input
-            System.out.print("Enter the ID of the product you want to remove, or type 'done' to finish: ");  // Modify to check if cart is empty before prompt
+            System.out.print("\nEnter the ID of the product you want to remove, or type 'done' to finish: ");  // Modify to check if cart is empty before prompt
             input = scanner.nextLine();
         }
     }
