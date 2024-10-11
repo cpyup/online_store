@@ -101,7 +101,7 @@ public class Store {
             return;
         }
 
-        printCart();
+        printCartDetails();
         handleCartInput();
     }
 
@@ -128,10 +128,10 @@ public class Store {
         } else {
             System.out.println("\nNo product found with ID: " + productId + " found in cart.");
         }
-        printCart();
+        printCartDetails();
     }
 
-    public static void printCart(){
+    public static void printCartDetails(){
         HashMap<Product,Integer> currentCounts = new HashMap<>();
         totalAmount = 0;  // Reset current total before adding from cart
 
@@ -157,7 +157,7 @@ public class Store {
             return;
         }
 
-        printCart();
+        printCartDetails();
 
         // Prompt user for confirmation
         System.out.print("\nEnter amount of cash for purchase: ");
