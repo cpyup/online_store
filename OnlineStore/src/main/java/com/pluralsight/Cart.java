@@ -60,7 +60,7 @@ public class Cart {
         printCartDetails();
     }
 
-    public void printCartDetails() {
+    private void printCartDetails() {
         HashMap<Product, Integer> currentCounts = new HashMap<>();
         totalAmount = 0.0;
 

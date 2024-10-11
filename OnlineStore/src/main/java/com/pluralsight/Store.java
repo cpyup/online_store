@@ -14,7 +14,7 @@ public class Store {
     private static final Cart CART = new Cart(SCANNER);
 
     public static void main(String[] args) {
-        loadInventory(PRODUCTS_PATH);
+        loadInventory();
 
         int choice = -1;
 
@@ -34,8 +34,8 @@ public class Store {
         }
     }
 
-    public static void loadInventory(String fileName) {
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+    private static void loadInventory() {
+        try (BufferedReader br = new BufferedReader(new FileReader(PRODUCTS_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split("\\|");
@@ -51,7 +51,7 @@ public class Store {
         }
     }
 
-    public static void displayProducts() {
+    private static void displayProducts() {
         if (INVENTORY.isEmpty()) {
             System.out.println("\nThe inventory is empty.");
             return;
@@ -83,7 +83,7 @@ public class Store {
         System.out.println(foundProduct != null ? foundProduct : "\nID Not Found");
     }
 
-    public static Product findProductById(String id) {
+    private static Product findProductById(String id) {
         return INVENTORY.stream()
                 .filter(product -> product.id().equalsIgnoreCase(id))
                 .findFirst()
