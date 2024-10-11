@@ -72,7 +72,7 @@ public class Cart {
             currentCounts.put(product, currentCounts.getOrDefault(product, 0) + 1);
         }
 
-        currentCounts.forEach((key, value) -> outString.append("[x" + value + "] " + key.toString() + "\n"));  // For displaying multiple items as count
+        currentCounts.forEach((key, value) -> outString.append("[x").append(value).append("] ").append(key.toString()).append("\n"));  // For displaying multiple items as count
 
         outString.append(String.format("\nTotal amount: $%.2f", totalAmount));
         return outString.toString();
@@ -93,6 +93,15 @@ public class Cart {
 
         if (paymentAmount >= totalAmount) {
             // Successful payment, handle receipt here
+            double change = paymentAmount - totalAmount;
+            String receiptOut = printCartDetails() +
+                    String.format("\nPayment Amount: $%.2f", paymentAmount) +
+                    (change == 0 ? "\n" : String.format("\nChange Due: $%.2f", change));
+
+
+            System.out.println(receiptOut);
+
+
             totalAmount = 0.0;
             ITEMS.clear();
             System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
