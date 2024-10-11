@@ -11,11 +11,10 @@ public class Store {
     private static final String PRODUCTS_PATH = "products.csv";
     private static final ArrayList<Product> INVENTORY = new ArrayList<>();
     private static final Scanner SCANNER = new Scanner(System.in);
-    private static Cart cart;
+    private static final Cart CART = new Cart(SCANNER);
 
     public static void main(String[] args) {
         loadInventory(PRODUCTS_PATH);
-        cart = new Cart(SCANNER);
 
         int choice = -1;
 
@@ -28,7 +27,7 @@ public class Store {
             // Call the appropriate method based on user choice
             switch (choice) {
                 case 1 -> displayProducts();
-                case 2 -> cart.displayCart();
+                case 2 -> CART.displayCart();
                 case 3 -> System.out.println("\nThank you for shopping with us!");
                 default -> System.out.println("Invalid choice!");
             }
@@ -72,7 +71,7 @@ public class Store {
             if ("S".equalsIgnoreCase(input)) {
                 searchProduct();
             } else if (!"E".equalsIgnoreCase(input)) {
-                cart.addToCart(input, INVENTORY);
+                CART.addToCart(input, INVENTORY);
             }
         } while (!"E".equalsIgnoreCase(input));
     }

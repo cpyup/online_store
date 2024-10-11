@@ -7,11 +7,11 @@ import java.util.Scanner;
 public class Cart {
 
     private final ArrayList<Product> items = new ArrayList<>();
+    private final Scanner SCANNER;
     private double totalAmount;
-    private final Scanner scanner;
 
-    public Cart(Scanner scanner) {
-        this.scanner = scanner;
+    public Cart(Scanner SCANNER) {
+        this.SCANNER = SCANNER;
     }
 
     public void addToCart(String productId, ArrayList<Product> inventory) {
@@ -38,7 +38,7 @@ public class Cart {
         String input;
         do {
             System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
-            input = scanner.nextLine().trim();
+            input = SCANNER.nextLine().trim();
             if ("C".equalsIgnoreCase(input)) {
                 checkOut();
                 return;
@@ -50,7 +50,7 @@ public class Cart {
 
     private void removeFromCart() {
         System.out.print("\nEnter product ID to remove: ");
-        String productId = scanner.nextLine().trim();
+        String productId = SCANNER.nextLine().trim();
         boolean removed = items.removeIf(product -> product.id().equalsIgnoreCase(productId));
         if (removed) {
             System.out.println("\nProduct removed from cart.");
@@ -62,7 +62,7 @@ public class Cart {
 
     public void printCartDetails() {
         HashMap<Product, Integer> currentCounts = new HashMap<>();
-        totalAmount = 0;  // Reset current total before adding from cart
+        totalAmount = 0.0;
 
         System.out.println("\nYour cart items:");
         for (Product product : items) {
@@ -72,7 +72,6 @@ public class Cart {
 
         currentCounts.forEach((key, value) -> System.out.println("[x" + value + "] " + key.toString()));  // For displaying multiple items as count
 
-        // Display the total amount
         System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
     }
 
@@ -86,15 +85,15 @@ public class Cart {
 
         // Prompt user for confirmation
         System.out.print("\nEnter amount of cash for purchase: ");
-        double paymentAmount = scanner.nextDouble();
-        scanner.nextLine();
+        double paymentAmount = SCANNER.nextDouble();
+        SCANNER.nextLine();
 
         if (paymentAmount >= totalAmount) {
             // Successful payment, handle receipt here
             totalAmount = 0.0;
             items.clear();
             System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
-            scanner.nextLine();
+            SCANNER.nextLine();
         } else {
             System.out.println("\nPurchase canceled: Insufficient Funds");
         }
