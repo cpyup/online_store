@@ -30,7 +30,7 @@ public class Cart {
             return;
         }
 
-        printCartDetails();
+        System.out.println(printCartDetails());
         handleCartInput();
     }
 
@@ -57,22 +57,25 @@ public class Cart {
         } else {
             System.out.println("\nNo product found with ID: " + productId + " found in cart.");
         }
-        printCartDetails();
+        System.out.println(printCartDetails());
     }
 
-    private void printCartDetails() {
+    public String printCartDetails() {
         HashMap<Product, Integer> currentCounts = new HashMap<>();
         totalAmount = 0.0;
 
-        System.out.println("\nYour cart items:");
+        StringBuilder outString = new StringBuilder();
+        outString.append("\nYour cart items:\n");
+
         for (Product product : ITEMS) {
             totalAmount += product.price();
             currentCounts.put(product, currentCounts.getOrDefault(product, 0) + 1);
         }
 
-        currentCounts.forEach((key, value) -> System.out.println("[x" + value + "] " + key.toString()));  // For displaying multiple items as count
+        currentCounts.forEach((key, value) -> outString.append("[x" + value + "] " + key.toString() + "\n"));  // For displaying multiple items as count
 
-        System.out.printf("\nTotal amount: $%.2f\n", totalAmount);
+        outString.append(String.format("\nTotal amount: $%.2f", totalAmount));
+        return outString.toString();
     }
 
     private void checkOut() {
@@ -81,7 +84,7 @@ public class Cart {
             return;
         }
 
-        printCartDetails();
+        System.out.println(printCartDetails());
 
         // Prompt user for confirmation
         System.out.print("\nEnter amount of cash for purchase: ");
