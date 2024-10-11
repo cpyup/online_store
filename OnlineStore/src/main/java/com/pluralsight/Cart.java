@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Cart {
 
-    private final ArrayList<Product> items = new ArrayList<>();
+    private final ArrayList<Product> ITEMS = new ArrayList<>();
     private final Scanner SCANNER;
     private double totalAmount;
 
@@ -17,7 +17,7 @@ public class Cart {
     public void addToCart(String productId, ArrayList<Product> inventory) {
         Product product = findProductById(productId, inventory);
         if (product != null) {
-            items.add(product);
+            ITEMS.add(product);
             System.out.println("\n" + product.name() + " has been added to your cart.");
         } else {
             System.out.println("\nProduct with ID '" + productId + "' not found.");
@@ -25,7 +25,7 @@ public class Cart {
     }
 
     public void displayCart() {
-        if (items.isEmpty()) {
+        if (ITEMS.isEmpty()) {
             System.out.println("\nYour cart is empty.");
             return;
         }
@@ -51,7 +51,7 @@ public class Cart {
     private void removeFromCart() {
         System.out.print("\nEnter product ID to remove: ");
         String productId = SCANNER.nextLine().trim();
-        boolean removed = items.removeIf(product -> product.id().equalsIgnoreCase(productId));
+        boolean removed = ITEMS.removeIf(product -> product.id().equalsIgnoreCase(productId));
         if (removed) {
             System.out.println("\nProduct removed from cart.");
         } else {
@@ -65,7 +65,7 @@ public class Cart {
         totalAmount = 0.0;
 
         System.out.println("\nYour cart items:");
-        for (Product product : items) {
+        for (Product product : ITEMS) {
             totalAmount += product.price();
             currentCounts.put(product, currentCounts.getOrDefault(product, 0) + 1);
         }
@@ -76,7 +76,7 @@ public class Cart {
     }
 
     private void checkOut() {
-        if (items.isEmpty()) {
+        if (ITEMS.isEmpty()) {
             System.out.println("\nYour cart is empty. Please add items to your cart before checking out.\n");
             return;
         }
@@ -91,7 +91,7 @@ public class Cart {
         if (paymentAmount >= totalAmount) {
             // Successful payment, handle receipt here
             totalAmount = 0.0;
-            items.clear();
+            ITEMS.clear();
             System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
             SCANNER.nextLine();
         } else {
