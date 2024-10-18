@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class Cart {
 
+    private static final String FOLDER_PATH = "receipts\\";
     private final ArrayList<Product> ITEMS = new ArrayList<>();
     private final Scanner SCANNER;
     private double totalAmount;
@@ -106,7 +107,7 @@ public class Cart {
 
 
             System.out.println(receiptOut);
-            saveNewReceipt("receipts\\",receiptOut);
+            saveNewReceipt(receiptOut);
 
 
             totalAmount = 0.0;
@@ -125,9 +126,9 @@ public class Cart {
                 .orElse(null);
     }
 
-    public static void saveNewReceipt(String filePath, String newReceiptOutput){
+    private static void saveNewReceipt(String newReceiptOutput){
         try{
-            String targetPathFull = filePath+getCurrentDatestamp()+".txt";
+            String targetPathFull = FOLDER_PATH+getCurrentDatestamp()+".txt";
             createNewFile(targetPathFull);
             writeToFile(targetPathFull,newReceiptOutput);
         }catch(Exception e){
