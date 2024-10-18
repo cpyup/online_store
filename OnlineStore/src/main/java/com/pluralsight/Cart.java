@@ -1,5 +1,11 @@
 package com.pluralsight;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -100,6 +106,7 @@ public class Cart {
 
 
             System.out.println(receiptOut);
+            saveNewReceipt("receipts\\",receiptOut);
 
 
             totalAmount = 0.0;
@@ -116,5 +123,40 @@ public class Cart {
                 .filter(product -> product.id().equalsIgnoreCase(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static void saveNewReceipt(String filePath, String newReceiptOutput){
+        try{
+            String targetPathFull = filePath+getCurrentDatestamp()+".txt";
+            createNewFile(targetPathFull);
+            writeToFile(targetPathFull,newReceiptOutput);
+        }catch(Exception e){
+            System.out.println("Error saving receipt\n"+e);
+        }
+    }
+
+    private static void createNewFile(String fileName){
+        try {
+            File newFile = new File(fileName);
+            System.out.println("\nFile '" + fileName + "' " + ((newFile.createNewFile()) ?"Successfully Created":"Already Exists"));
+        } catch (IOException ex) {
+            System.out.println("Error Creating File " + fileName);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static void writeToFile(String targetFilePath, String dataToWrite){
+        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(targetFilePath))){
+            bufferedWriter.write(dataToWrite);
+            bufferedWriter.flush();
+        }catch(Exception e){
+            System.out.println("Error writing to file "+targetFilePath+e);
+        }
+    }
+
+    private static String getCurrentDatestamp(){
+        DateTimeFormatter stampFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+        LocalDateTime now = LocalDateTime.now();
+        return now.format(stampFormat);
     }
 }
