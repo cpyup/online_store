@@ -14,7 +14,7 @@ public class Store {
     private static final Cart CART = new Cart(SCANNER);
 
     public static void main(String[] args) {
-        loadInventory();
+        loadProductsFromFile(PRODUCTS_PATH,INVENTORY);
 
         int choice = -1;
 
@@ -26,7 +26,7 @@ public class Store {
 
             // Call the appropriate method based on user choice
             switch (choice) {
-                case 1 -> displayProducts();
+                case 1 -> displayProducts(INVENTORY);
                 case 2 -> CART.displayCart();
                 case 3 -> System.out.println("\nThank you for shopping with us!");
                 default -> System.out.println("Invalid choice!");
@@ -34,16 +34,13 @@ public class Store {
         }
     }
 
-    private static void loadInventory() {
-        try (BufferedReader br = new BufferedReader(new FileReader(PRODUCTS_PATH))) {
+    private static void loadProductsFromFile(String filePath, ArrayList<Product> targetInventory) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split("\\|");
                 if (values.length == 3) {
-                    String id = values[0].trim();
-                    String name = values[1].trim();
-                    double price = Double.parseDouble(values[2].trim());
-                    INVENTORY.add(new Product(id, name, price));
+                    targetInventory.add(parseProductString(values));
                 }
             }
         } catch (IOException e) {
@@ -51,14 +48,26 @@ public class Store {
         }
     }
 
-    private static void displayProducts() {
-        if (INVENTORY.isEmpty()) {
+    private static Product parseProductString(String[] values){
+        try{
+            String id = values[0].trim();
+            String name = values[1].trim();
+            double price = Double.parseDouble(values[2].trim());
+            return new Product(id, name, price);
+        }catch(Exception e){
+            System.out.println("Error parsing line "+e);
+            return null;
+        }
+    }
+
+    private static void displayProducts(ArrayList<Product> targetInventory) {
+        if (targetInventory.isEmpty()) {
             System.out.println("\nThe inventory is empty.");
             return;
         }
 
         System.out.println("\nAvailable Products:");
-        INVENTORY.forEach(System.out::println);
+        targetInventory.forEach(System.out::println);
         handleProductInput();
     }
 
@@ -69,23 +78,24 @@ public class Store {
             input = SCANNER.nextLine().trim();
 
             if ("S".equalsIgnoreCase(input)) {
-                searchProduct();
+                searchProductId(INVENTORY);
             } else if (!"E".equalsIgnoreCase(input)) {
                 CART.addToCart(input, INVENTORY);
             }
         } while (!"E".equalsIgnoreCase(input));
     }
 
-    private static void searchProduct() {
+    private static void searchProductId(ArrayList<Product> targetInventory) {
         System.out.println("\nEnter the ID to search for: ");
         String searchIn = SCANNER.nextLine().trim();
-        Product foundProduct = findProductById(searchIn);
+
+        Product foundProduct = findProductById(searchIn,targetInventory);
         System.out.println(foundProduct != null ? foundProduct : "\nID Not Found");
     }
 
-    private static Product findProductById(String id) {
-        return INVENTORY.stream()
-                .filter(product -> product.id().equalsIgnoreCase(id))
+    private static Product findProductById(String targetId, ArrayList<Product> targetInventory) {
+        return targetInventory.stream()
+                .filter(product -> product.id().equalsIgnoreCase(targetId))
                 .findFirst()
                 .orElse(null);
     }

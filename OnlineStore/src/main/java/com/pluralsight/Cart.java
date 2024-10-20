@@ -14,7 +14,7 @@ public class Cart {
 
     private static final String FOLDER_PATH = "receipts\\";
     private final ArrayList<Product> ITEMS = new ArrayList<>();
-    private final Scanner SCANNER;
+    private final Scanner SCANNER;  // Remove this, use one scanner, pass as needed (better, try to remove from class altogether)
     private double totalAmount;
 
     public Cart(Scanner SCANNER) {
@@ -98,25 +98,32 @@ public class Cart {
         double paymentAmount = SCANNER.nextDouble();
         SCANNER.nextLine();
 
+        processPayment(paymentAmount);
+    }
+
+    private void processPayment(double paymentAmount){
         if (paymentAmount >= totalAmount) {
-            // Successful payment, handle receipt here
-            double change = paymentAmount - totalAmount;
-            String receiptOut = printCartDetails() +
-                    String.format("\nPayment Amount: $%.2f", paymentAmount) +
-                    (change == 0 ? "\n" : String.format("\nChange Due: $%.2f", change));
-
-
-            System.out.println(receiptOut);
-            saveNewReceipt(receiptOut);
-
-
-            totalAmount = 0.0;
-            ITEMS.clear();
+            successfulPayment((paymentAmount));
             System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
             SCANNER.nextLine();
         } else {
             System.out.println("\nPurchase canceled: Insufficient Funds");
         }
+    }
+
+    private void successfulPayment(double paymentAmount){
+        double change = paymentAmount - totalAmount;
+        String receiptOut = printCartDetails() +
+                String.format("\nPayment Amount: $%.2f", paymentAmount) +
+                (change == 0 ? "\n" : String.format("\nChange Due: $%.2f", change));
+
+
+        System.out.println(receiptOut);
+        saveNewReceipt(receiptOut);
+
+
+        totalAmount = 0.0;
+        ITEMS.clear();
     }
 
     private Product findProductById(String id, ArrayList<Product> inventory) {
