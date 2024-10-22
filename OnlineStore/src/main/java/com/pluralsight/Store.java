@@ -100,7 +100,7 @@ public class Store {
     }
 
     private static void searchProductId(ArrayList<Product> targetInventory) {
-        System.out.println("\nEnter the ID to search for: ");  // Input needs moved
+        System.out.print("\nEnter the ID to search for: ");  // Input needs moved
         String searchIn = SCANNER.nextLine().trim();
         StringBuilder output = new StringBuilder();
         findProductById(searchIn,targetInventory).forEach(product -> output.append("\n").append(product.toString()));

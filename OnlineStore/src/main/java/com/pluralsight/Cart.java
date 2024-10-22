@@ -22,7 +22,7 @@ public class Cart {
     }
 
     public void addToCart(String productId, ArrayList<Product> inventory, int productCount) {
-        Product product = findProductById(productId, inventory);
+        Product product = searchCartForId(productId, inventory);
 
         if (product != null) {
             for(int i = 0; i < productCount; i++){  // For loop to allow adding multiple items at once
@@ -97,42 +97,48 @@ public class Cart {
             return;
         }
 
-        System.out.println("\n"+this);  // Print full cart before prompting confirmation
+        if(promptUserConfirmation()){
+            System.out.print("\nEnter amount of cash for purchase: ");
+            double paymentAmount = SCANNER.nextDouble();
+            SCANNER.nextLine();
 
-        // Prompt user for confirmation
-        System.out.print("\nEnter amount of cash for purchase: ");
-        double paymentAmount = SCANNER.nextDouble();
-        SCANNER.nextLine();
-
-        processPayment(paymentAmount);
+            tryProcessPayment(paymentAmount);
+        }
     }
 
-    private void processPayment(double paymentAmount){
+    private boolean promptUserConfirmation(){
+        System.out.print("\nCHECKOUT CART\n\n"+this+"\n\nPress 'Enter' to continue with purchase or 'E' to exit to the main menu.");  // Print full cart before prompting confirmation
+        String input = SCANNER.nextLine().trim();
+        return !input.equalsIgnoreCase("E");
+    }
+
+    private void tryProcessPayment(double paymentAmount){
         if (paymentAmount >= totalAmount) {
-            successfulPayment((paymentAmount));
-            System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
+            successfulPaymentProcess((paymentAmount));
             SCANNER.nextLine();
         } else {
             System.out.println("\nPurchase canceled: Insufficient Funds");
         }
     }
 
-    private void successfulPayment(double paymentAmount){
+    private void successfulPaymentProcess(double paymentAmount){
         double change = paymentAmount - totalAmount;
+
         String receiptOut = this +
                 String.format("\nPayment Amount: $%.2f", paymentAmount) +
                 (change == 0.0 ? "\n" : String.format("\nChange Due: $%.2f", change));
 
 
-        System.out.println(receiptOut);
+        System.out.println("\n"+receiptOut);
         saveNewReceipt(receiptOut);
-
 
         totalAmount = 0.0;
         ITEMS.clear();
+
+        System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
     }
 
-    private Product findProductById(String id, ArrayList<Product> inventory) {
+    private Product searchCartForId(String id, ArrayList<Product> inventory) {
         return inventory.stream()
                 .filter(product -> product.id().equalsIgnoreCase(id))
                 .findFirst()
@@ -164,7 +170,7 @@ public class Cart {
             bufferedWriter.write(dataToWrite);
             bufferedWriter.flush();
         }catch(Exception e){
-            System.out.println("\nError writing to file "+targetFilePath+e);
+            System.out.println("\nError writing to file "+targetFilePath+" "+e);
         }
     }
 
