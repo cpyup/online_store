@@ -12,7 +12,7 @@ public class Store {
     private static final Cart CART = new Cart();
 
     public static void main(String[] args) {
-        InventoryManager.loadProductsFromFile(PRODUCTS_PATH,INVENTORY);
+        InventoryManager.loadProducts(PRODUCTS_PATH,INVENTORY);
 
         int choice = -1;
 
@@ -25,7 +25,7 @@ public class Store {
             // Call the appropriate method based on user choice
             switch (choice) {
                 case 1 -> InputManager.productMenuDisplay(INVENTORY,SCANNER,CART);
-                case 2 -> /*CART.displayCartContents(SCANNER);*/InputManager.handleCartInput(SCANNER,CART);
+                case 2 -> InputManager.handleCartInput(SCANNER,CART);
                 case 3 -> System.out.println("\nThank you for shopping with us!");
                 default -> System.out.println("Invalid choice!");
             }

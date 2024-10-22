@@ -19,6 +19,7 @@ public class InputManager {
             }
         } while (!"E".equalsIgnoreCase(input));
     }
+
     public static void inventorySearchDisplay(ArrayList<Product> targetInventory, Scanner scanner){
         System.out.print("\nEnter the ID to search for: ");
         String targetId = scanner.nextLine().trim();
@@ -33,6 +34,8 @@ public class InputManager {
 
     public static void handleCartInput(Scanner scanner, Cart cart) {
         cart.displayCartContents();
+        if(cart.isEmpty()) return;
+
         String input;
         do {
             System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
@@ -52,7 +55,7 @@ public class InputManager {
     public static void removeCartItemInput(Scanner scanner, Cart cart){
         System.out.print("\nEnter product ID to remove: ");
         String productId = scanner.nextLine().trim();
-        cart.removeProductFromCart(productId);
+        cart.removeProductFromCart(productId,1);
     }
 
     public static double getUserPayment(Scanner scanner){
@@ -69,7 +72,7 @@ public class InputManager {
             int itemCount = args.length > 1 ? Integer.parseInt(args[1]) : 1;
             cart.addProductToCart(args[0], targetInventory, Math.max(itemCount, 1));
         }catch (NumberFormatException e) {
-            System.out.println("Error Parsing Item Count\nExpected Input: item id [String] item amount [int]");
+            System.out.println("\nError Parsing Item Amount\nExpected Input: item id [String] item amount [int]");
         }
     }
 }

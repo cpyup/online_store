@@ -3,25 +3,29 @@ package com.pluralsight;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryManager {
-    public static void loadProductsFromFile(String filePath, ArrayList<Product> targetInventory) {
+    public static void loadProducts(String filePath, List<Product> targetInventory) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split("\\|");
                 if (values.length == 3) {
-                    targetInventory.add(parseProductString(values));
+                    Product product = parseProductString(values);
+                    if (product != null) {
+                        targetInventory.add(product);
+                    }
+                } else {
+                    System.out.println("Invalid product line: " + line);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error loading products: " + e.getMessage());
         }
     }
 
-    public static void displayAllProducts(ArrayList<Product> currentInventory) {
+    public static void displayAllProducts(List<Product> currentInventory) {
         if (currentInventory.isEmpty()) {
             System.out.println("\nThe inventory is empty.");
             return;
@@ -31,27 +35,30 @@ public class InventoryManager {
         currentInventory.forEach(System.out::println);
     }
 
-    public static void searchInventoryForId(ArrayList<Product> targetInventory, String targetId) {
-        StringBuilder output = new StringBuilder();
-        findProductsById(targetId,targetInventory).forEach(product -> output.append("\n").append(product.toString()));
-        System.out.println(output.isEmpty() ? "\nID Not Found" : output);
+    public static void searchInventoryForId(List<Product> targetInventory, String targetId) {
+        List<Product> foundProducts = findProductsById(targetId, targetInventory);
+        if (foundProducts.isEmpty()) {
+            System.out.println("\nID Not Found");
+        } else {
+            foundProducts.forEach(product -> System.out.println("\n" + product));
+        }
     }
 
-    private static Product parseProductString(String[] values){
-        try{
+    private static Product parseProductString(String[] values) {
+        try {
             String id = values[0].trim();
             String name = values[1].trim();
             double price = Double.parseDouble(values[2].trim());
             return new Product(id, name, price);
-        }catch(Exception e){
-            System.out.println("Error parsing line "+e);
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing price: " + e.getMessage());
             return null;
         }
     }
 
-    private static List<Product> findProductsById(String targetId, ArrayList<Product> targetInventory) {
+    private static List<Product> findProductsById(String targetId, List<Product> targetInventory) {
         return targetInventory.stream()
-                .filter(product -> product.id().contains(targetId.toUpperCase())).
-                toList();
+                .filter(product -> product.id().contains(targetId.toUpperCase()))
+                .toList();
     }
 }
