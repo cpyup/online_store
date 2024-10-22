@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class Cart {
 
@@ -35,21 +34,21 @@ public class Cart {
         }
     }
 
-    public void displayCartContents(Scanner scanner) {
+    public void displayCartContents() {
         if (isEmpty()) {
             System.out.println("\nYour cart is empty.");
             return;
         }
         System.out.println("\nYour cart items:\n");
         System.out.println(this);
-        InputManager.handleCartInput(scanner,this);
+
     }
 
-    public void removeProductFromCart(String productId, Scanner scanner) {
+    public void removeProductFromCart(String productId) {
         // Needs updated to handle removing x items, similar to adding
         boolean removed = ITEMS.removeIf(product -> product.id().equalsIgnoreCase(productId));
         System.out.println(removed ? "\nProduct removed from cart." : "\nNo product found with ID: " + productId + " found in cart.");
-        displayCartContents(scanner);
+        displayCartContents();
     }
 
     @Override
@@ -61,15 +60,12 @@ public class Cart {
         return (ITEMS.isEmpty());
     }
 
-    public void checkOutCurrentCart(Scanner scanner) {
+    public void checkOutCurrentCart(double paymentAmount) {
         if (isEmpty()) {
             System.out.println("\nYour cart is empty. Please add items to your cart before checking out.\n");
             return;
         }
-
-        if(InputManager.promptUserConfirmation(scanner,this)){
-            tryProcessPayment(InputManager.getUserPayment(scanner));
-        }
+        tryProcessPayment(paymentAmount);
     }
 
     private StringBuilder generatedReceiptOutput(){
@@ -98,8 +94,7 @@ public class Cart {
     private void successfulPaymentProcess(double paymentAmount){
         double change = paymentAmount - totalAmount;
 
-        String receiptOut = this +
-                String.format("\nPayment Amount: $%.2f", paymentAmount) +
+        String receiptOut = this + String.format("\nPayment Amount: $%.2f", paymentAmount) +
                 (change == 0.0 ? "\n" : String.format("\nChange Due: $%.2f", change));
 
         System.out.println("\n"+receiptOut);

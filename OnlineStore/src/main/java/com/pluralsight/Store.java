@@ -24,8 +24,8 @@ public class Store {
 
             // Call the appropriate method based on user choice
             switch (choice) {
-                case 1 -> InventoryManager.displayAllProducts(INVENTORY,SCANNER,CART);
-                case 2 -> CART.displayCartContents(SCANNER);
+                case 1 -> InputManager.productMenuDisplay(INVENTORY,SCANNER,CART);
+                case 2 -> /*CART.displayCartContents(SCANNER);*/InputManager.handleCartInput(SCANNER,CART);
                 case 3 -> System.out.println("\nThank you for shopping with us!");
                 default -> System.out.println("Invalid choice!");
             }

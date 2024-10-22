@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class InventoryManager {
     public static void loadProductsFromFile(String filePath, ArrayList<Product> targetInventory) {
@@ -22,7 +21,7 @@ public class InventoryManager {
         }
     }
 
-    public static void displayAllProducts(ArrayList<Product> currentInventory, Scanner scanner, Cart cart) {
+    public static void displayAllProducts(ArrayList<Product> currentInventory) {
         if (currentInventory.isEmpty()) {
             System.out.println("\nThe inventory is empty.");
             return;
@@ -30,7 +29,6 @@ public class InventoryManager {
 
         System.out.println("\nAvailable Products:");
         currentInventory.forEach(System.out::println);
-        InputManager.productMenuDisplay(currentInventory,scanner,cart);
     }
 
     public static void searchInventoryForId(ArrayList<Product> targetInventory, String targetId) {

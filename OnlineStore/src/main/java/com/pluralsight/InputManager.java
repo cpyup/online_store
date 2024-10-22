@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class InputManager {
 
     public static void productMenuDisplay(ArrayList<Product> targetInventory, Scanner scanner, Cart cart) {
+        InventoryManager.displayAllProducts(targetInventory);
         String input;
         do {
             System.out.print("\nEnter product ID to add to your cart, 'S' to search, or 'E' to exit: ");
@@ -31,12 +32,15 @@ public class InputManager {
     }
 
     public static void handleCartInput(Scanner scanner, Cart cart) {
+        cart.displayCartContents();
         String input;
         do {
             System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
             input = scanner.nextLine().trim();
             if ("C".equalsIgnoreCase(input)) {
-                cart.checkOutCurrentCart(scanner);
+                if(promptUserConfirmation(scanner,cart)){
+                    cart.checkOutCurrentCart(getUserPayment(scanner));
+                }
                 return;
             } else if ("R".equalsIgnoreCase(input)) {
                 removeCartItemInput(scanner,cart);
@@ -48,7 +52,7 @@ public class InputManager {
     public static void removeCartItemInput(Scanner scanner, Cart cart){
         System.out.print("\nEnter product ID to remove: ");
         String productId = scanner.nextLine().trim();
-        cart.removeProductFromCart(productId, scanner);
+        cart.removeProductFromCart(productId);
     }
 
     public static double getUserPayment(Scanner scanner){
