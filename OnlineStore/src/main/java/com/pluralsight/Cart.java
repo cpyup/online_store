@@ -55,6 +55,7 @@ public class Cart {
                 return;
             } else if ("R".equalsIgnoreCase(input)) {
                 removeFromCart();
+                if(ITEMS.isEmpty())return;
             }
         } while (!"E".equalsIgnoreCase(input));
     }
@@ -64,13 +65,10 @@ public class Cart {
         System.out.print("\nEnter product ID to remove: ");
         String productId = SCANNER.nextLine().trim();
 
+        // Needs updated to handle removing x items, similar to adding
         boolean removed = ITEMS.removeIf(product -> product.id().equalsIgnoreCase(productId));
-        if (removed) {
-            System.out.println("\nProduct removed from cart.");
-        } else {
-            System.out.println("\nNo product found with ID: " + productId + " found in cart.");
-        }
-        System.out.println(this);
+        System.out.println(removed ? "\nProduct removed from cart." : "\nNo product found with ID: " + productId + " found in cart.");
+        displayCart();
     }
 
     @Override
@@ -106,8 +104,8 @@ public class Cart {
         }
     }
 
-    private boolean promptUserConfirmation(){
-        System.out.print("\nCHECKOUT CART\n\n"+this+"\n\nPress 'Enter' to continue with purchase or 'E' to exit to the main menu.");  // Print full cart before prompting confirmation
+    private boolean promptUserConfirmation(){  // More input
+        System.out.print("\nCHECKOUT CART\n\n"+this+"\n\nPress 'Enter' to continue with purchase or type 'E' to exit to the main menu.");
         String input = SCANNER.nextLine().trim();
         return !input.equalsIgnoreCase("E");
     }
