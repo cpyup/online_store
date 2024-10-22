@@ -14,20 +14,20 @@ public class Cart {
 
     private static final String FOLDER_PATH = "receipts\\";
     private final ArrayList<Product> ITEMS = new ArrayList<>();
-    private final Scanner SCANNER;  // Remove this, use one scanner, pass as needed (better, try to remove from class altogether)
     private double totalAmount;
 
-    public Cart(Scanner SCANNER) {
-        this.SCANNER = SCANNER;
+    public Cart() {
+        totalAmount = 0.0;
     }
 
-    public void addToCart(String productId, ArrayList<Product> inventory, int productCount) {
+    public void addProductToCart(String productId, ArrayList<Product> inventory, int productCount) {
         Product product = searchCartForId(productId, inventory);
 
         if (product != null) {
             for(int i = 0; i < productCount; i++){  // For loop to allow adding multiple items at once
                 ITEMS.add(product);
             }
+
             String itemsPurchased = (productCount > 1) ? productCount+" "+product.name()+"s have" : product.name()+" has";
             System.out.println("\n" + itemsPurchased + " been added to your cart.");
         } else {
@@ -35,40 +35,21 @@ public class Cart {
         }
     }
 
-    public void displayCart() {
+    public void displayCartContents(Scanner scanner) {
         if (ITEMS.isEmpty()) {
             System.out.println("\nYour cart is empty.");
             return;
         }
         System.out.println("\nYour cart items:\n");
         System.out.println(this);
-        handleCartInput();
+        InputManager.handleCartInput(scanner,this);
     }
 
-    private void handleCartInput() {  // Should be moved to a new input class
-        String input;
-        do {
-            System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
-            input = SCANNER.nextLine().trim();
-            if ("C".equalsIgnoreCase(input)) {
-                checkOut();
-                return;
-            } else if ("R".equalsIgnoreCase(input)) {
-                removeFromCart();
-                if(ITEMS.isEmpty())return;
-            }
-        } while (!"E".equalsIgnoreCase(input));
-    }
-
-    private void removeFromCart() {
-        // Input portion, should be moved
-        System.out.print("\nEnter product ID to remove: ");
-        String productId = SCANNER.nextLine().trim();
-
+    public void removeProductFromCart(String productId, Scanner scanner) {
         // Needs updated to handle removing x items, similar to adding
         boolean removed = ITEMS.removeIf(product -> product.id().equalsIgnoreCase(productId));
         System.out.println(removed ? "\nProduct removed from cart." : "\nNo product found with ID: " + productId + " found in cart.");
-        displayCart();
+        displayCartContents(scanner);
     }
 
     @Override
@@ -89,31 +70,24 @@ public class Cart {
         return outString.toString();
     }
 
-    private void checkOut() {
+    public boolean isEmpty(){
+        return (ITEMS.isEmpty());
+    }
+
+    public void checkOutCurrentCart(Scanner scanner) {
         if (ITEMS.isEmpty()) {
             System.out.println("\nYour cart is empty. Please add items to your cart before checking out.\n");
             return;
         }
 
-        if(promptUserConfirmation()){
-            System.out.print("\nEnter amount of cash for purchase: ");
-            double paymentAmount = SCANNER.nextDouble();
-            SCANNER.nextLine();
-
-            tryProcessPayment(paymentAmount);
+        if(InputManager.promptUserConfirmation(scanner,this)){
+            tryProcessPayment(InputManager.getUserPayment(scanner));
         }
-    }
-
-    private boolean promptUserConfirmation(){  // More input
-        System.out.print("\nCHECKOUT CART\n\n"+this+"\n\nPress 'Enter' to continue with purchase or type 'E' to exit to the main menu.");
-        String input = SCANNER.nextLine().trim();
-        return !input.equalsIgnoreCase("E");
     }
 
     private void tryProcessPayment(double paymentAmount){
         if (paymentAmount >= totalAmount) {
             successfulPaymentProcess((paymentAmount));
-            SCANNER.nextLine();
         } else {
             System.out.println("\nPurchase canceled: Insufficient Funds");
         }
@@ -126,14 +100,13 @@ public class Cart {
                 String.format("\nPayment Amount: $%.2f", paymentAmount) +
                 (change == 0.0 ? "\n" : String.format("\nChange Due: $%.2f", change));
 
-
         System.out.println("\n"+receiptOut);
         saveNewReceipt(receiptOut);
 
         totalAmount = 0.0;
         ITEMS.clear();
 
-        System.out.println("\nPurchase successful!\nPress enter to return to main menu.");
+        System.out.println("\nPurchase successful!");
     }
 
     private Product searchCartForId(String id, ArrayList<Product> inventory) {
