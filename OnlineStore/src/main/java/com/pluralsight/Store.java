@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Store {
@@ -80,23 +81,35 @@ public class Store {
             if ("S".equalsIgnoreCase(input)) {
                 searchProductId(INVENTORY);
             } else if (!"E".equalsIgnoreCase(input)) {
-                CART.addToCart(input, INVENTORY);
+                parseAddingInput(input);
             }
         } while (!"E".equalsIgnoreCase(input));
     }
 
-    private static void searchProductId(ArrayList<Product> targetInventory) {
-        System.out.println("\nEnter the ID to search for: ");
-        String searchIn = SCANNER.nextLine().trim();
-
-        Product foundProduct = findProductById(searchIn,targetInventory);
-        System.out.println(foundProduct != null ? foundProduct : "\nID Not Found");
+    // Parsing input string to check for optional argument (item count)
+    private static void parseAddingInput(String input){
+        String[] args;
+        try{
+            // If there is an amount arg, call to add item with the amount. If not, default to 1
+            args = input.split(" ");
+            int itemCount = args.length > 1 ? Integer.parseInt(args[1]) : 1;
+            CART.addToCart(args[0], INVENTORY, Math.max(itemCount, 1));
+        }catch (NumberFormatException e) {
+            System.out.println("Error Parsing Item Count\nExpected Input: item id [String] item amount [int]");
+        }
     }
 
-    private static Product findProductById(String targetId, ArrayList<Product> targetInventory) {
+    private static void searchProductId(ArrayList<Product> targetInventory) {
+        System.out.println("\nEnter the ID to search for: ");  // Input needs moved
+        String searchIn = SCANNER.nextLine().trim();
+        StringBuilder output = new StringBuilder();
+        findProductById(searchIn,targetInventory).forEach(product -> output.append("\n").append(product.toString()));
+        System.out.println(output.isEmpty() ? "\nID Not Found" : output);
+    }
+
+    private static List<Product> findProductById(String targetId, ArrayList<Product> targetInventory) {
         return targetInventory.stream()
-                .filter(product -> product.id().equalsIgnoreCase(targetId))
-                .findFirst()
-                .orElse(null);
+               .filter(product -> product.id().contains(targetId.toUpperCase())).
+               toList();
     }
 }

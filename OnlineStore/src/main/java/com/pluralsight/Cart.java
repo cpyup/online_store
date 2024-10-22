@@ -21,11 +21,15 @@ public class Cart {
         this.SCANNER = SCANNER;
     }
 
-    public void addToCart(String productId, ArrayList<Product> inventory) {
+    public void addToCart(String productId, ArrayList<Product> inventory, int productCount) {
         Product product = findProductById(productId, inventory);
+
         if (product != null) {
-            ITEMS.add(product);
-            System.out.println("\n" + product.name() + " has been added to your cart.");
+            for(int i = 0; i < productCount; i++){  // For loop to allow adding multiple items at once
+                ITEMS.add(product);
+            }
+            String itemsPurchased = (productCount > 1) ? productCount+" "+product.name()+"s have" : product.name()+" has";
+            System.out.println("\n" + itemsPurchased + " been added to your cart.");
         } else {
             System.out.println("\nProduct with ID '" + productId + "' not found.");
         }
@@ -36,12 +40,12 @@ public class Cart {
             System.out.println("\nYour cart is empty.");
             return;
         }
-
-        System.out.println(printCartDetails());
+        System.out.println("\nYour cart items:\n");
+        System.out.println(this);
         handleCartInput();
     }
 
-    private void handleCartInput() {
+    private void handleCartInput() {  // Should be moved to a new input class
         String input;
         do {
             System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
@@ -56,23 +60,25 @@ public class Cart {
     }
 
     private void removeFromCart() {
+        // Input portion, should be moved
         System.out.print("\nEnter product ID to remove: ");
         String productId = SCANNER.nextLine().trim();
+
         boolean removed = ITEMS.removeIf(product -> product.id().equalsIgnoreCase(productId));
         if (removed) {
             System.out.println("\nProduct removed from cart.");
         } else {
             System.out.println("\nNo product found with ID: " + productId + " found in cart.");
         }
-        System.out.println(printCartDetails());
+        System.out.println(this);
     }
 
-    public String printCartDetails() {
+    @Override
+    public String toString() {
         HashMap<Product, Integer> currentCounts = new HashMap<>();
         totalAmount = 0.0;
 
         StringBuilder outString = new StringBuilder();
-        outString.append("\nYour cart items:\n");
 
         for (Product product : ITEMS) {
             totalAmount += product.price();
@@ -91,7 +97,7 @@ public class Cart {
             return;
         }
 
-        System.out.println(printCartDetails());
+        System.out.println("\n"+this);  // Print full cart before prompting confirmation
 
         // Prompt user for confirmation
         System.out.print("\nEnter amount of cash for purchase: ");
@@ -113,9 +119,9 @@ public class Cart {
 
     private void successfulPayment(double paymentAmount){
         double change = paymentAmount - totalAmount;
-        String receiptOut = printCartDetails() +
+        String receiptOut = this +
                 String.format("\nPayment Amount: $%.2f", paymentAmount) +
-                (change == 0 ? "\n" : String.format("\nChange Due: $%.2f", change));
+                (change == 0.0 ? "\n" : String.format("\nChange Due: $%.2f", change));
 
 
         System.out.println(receiptOut);
@@ -137,9 +143,9 @@ public class Cart {
         try{
             String targetPathFull = FOLDER_PATH+getCurrentDatestamp()+".txt";
             createNewFile(targetPathFull);
-            writeToFile(targetPathFull,newReceiptOutput);
+            writeToFile(targetPathFull,"Transaction Receipt "+getCurrentDatestamp()+"\n\nPurchased Item(s):\n"+newReceiptOutput);
         }catch(Exception e){
-            System.out.println("Error saving receipt\n"+e);
+            System.out.println("\nError saving receipt:\n"+e);
         }
     }
 
@@ -158,7 +164,7 @@ public class Cart {
             bufferedWriter.write(dataToWrite);
             bufferedWriter.flush();
         }catch(Exception e){
-            System.out.println("Error writing to file "+targetFilePath+e);
+            System.out.println("\nError writing to file "+targetFilePath+e);
         }
     }
 
