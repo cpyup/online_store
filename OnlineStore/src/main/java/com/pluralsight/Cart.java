@@ -36,7 +36,7 @@ public class Cart {
     }
 
     public void displayCartContents(Scanner scanner) {
-        if (ITEMS.isEmpty()) {
+        if (isEmpty()) {
             System.out.println("\nYour cart is empty.");
             return;
         }
@@ -54,20 +54,7 @@ public class Cart {
 
     @Override
     public String toString() {
-        HashMap<Product, Integer> currentCounts = new HashMap<>();
-        totalAmount = 0.0;
-
-        StringBuilder outString = new StringBuilder();
-
-        for (Product product : ITEMS) {
-            totalAmount += product.price();
-            currentCounts.put(product, currentCounts.getOrDefault(product, 0) + 1);
-        }
-
-        currentCounts.forEach((key, value) -> outString.append("[x").append(value).append("] ").append(key.toString()).append("\n"));  // For displaying multiple items as count
-
-        outString.append(String.format("\nTotal amount: $%.2f", totalAmount));
-        return outString.toString();
+        return generatedReceiptOutput().toString();
     }
 
     public boolean isEmpty(){
@@ -75,7 +62,7 @@ public class Cart {
     }
 
     public void checkOutCurrentCart(Scanner scanner) {
-        if (ITEMS.isEmpty()) {
+        if (isEmpty()) {
             System.out.println("\nYour cart is empty. Please add items to your cart before checking out.\n");
             return;
         }
@@ -83,6 +70,21 @@ public class Cart {
         if(InputManager.promptUserConfirmation(scanner,this)){
             tryProcessPayment(InputManager.getUserPayment(scanner));
         }
+    }
+
+    private StringBuilder generatedReceiptOutput(){
+        StringBuilder outString = new StringBuilder();
+        HashMap<Product, Integer> currentCounts = new HashMap<>();
+        totalAmount = 0.0;
+
+        ITEMS.forEach(product -> {
+            totalAmount += product.price();
+            currentCounts.put(product, currentCounts.getOrDefault(product, 0) + 1);
+        });
+
+        currentCounts.forEach((key, value) -> outString.append("[x").append(value).append("] ").append(key.toString()).append("\n"));
+        outString.append(String.format("\nTotal amount: $%.2f", totalAmount));
+        return outString;
     }
 
     private void tryProcessPayment(double paymentAmount){

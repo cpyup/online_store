@@ -30,7 +30,7 @@ public class InputManager {
         return !input.equalsIgnoreCase("E");
     }
 
-    public static void handleCartInput(Scanner scanner, Cart cart) {  // Should be moved to a new input class
+    public static void handleCartInput(Scanner scanner, Cart cart) {
         String input;
         do {
             System.out.println("\nOptions:\n\tC - Checkout\n\tR - Remove From Cart\n\tE - Exit to the main menu");
