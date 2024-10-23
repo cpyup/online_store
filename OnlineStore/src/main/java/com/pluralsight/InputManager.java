@@ -57,7 +57,7 @@ public class InputManager {
      * @return {@code true} if the user confirms the purchase, {@code false} if they choose to exit.
      */
     public static boolean promptUserConfirmation(Scanner scanner, Cart cart){
-        System.out.print("\nCHECKOUT CART\n\n"+cart+"\n\nPress 'Enter' to continue with purchase or type 'E' to exit to the main menu.");
+        System.out.print("\nTotal Due: $"+cart.getTotalAmount()+"\n\nPress 'Enter' to continue with purchase or type 'E' to exit to the main menu.");
         String input = scanner.nextLine().trim();
         return !input.equalsIgnoreCase("E");
     }

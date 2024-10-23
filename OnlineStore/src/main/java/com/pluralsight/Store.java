@@ -4,8 +4,7 @@ import java.util.Scanner;
 
 
 public class Store {
-
-    private static final String PRODUCTS_PATH = "products.csv";
+    public static final String PRODUCTS_PATH = "products.csv";
     private static final Inventory INVENTORY = new Inventory();
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final Cart CART = new Cart();

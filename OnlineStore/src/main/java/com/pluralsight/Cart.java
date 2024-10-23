@@ -1,23 +1,25 @@
 package com.pluralsight;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Cart { // TODO: Move methods related to external files to new class. If time allows, move everything related to receipts to another class too.
-
-    private static final String FOLDER_PATH = "receipts\\";
     private final List<Product> items = new ArrayList<>();
     private double totalAmount;
 
     public Cart() {
-        totalAmount = 0.0;
+        calculateAmount();
+    }
+
+    public String getTotalAmount(){
+        calculateAmount();
+        return String.format("%.2f",totalAmount);
+    }
+
+    private void calculateAmount(){
+        totalAmount = 0;
+        items.forEach(product -> totalAmount += product.price());
     }
 
     /**
@@ -56,7 +58,9 @@ public class Cart { // TODO: Move methods related to external files to new class
             System.out.println("\nYour cart is empty.");
             return;
         }
-        System.out.println("\nYour cart items:\n" + generateReceiptOutput());
+        Receipt cartReceipt = new Receipt(totalAmount,items);
+
+        System.out.println("\nYour cart items:\n" + cartReceipt);
     }
 
     /**
@@ -107,40 +111,6 @@ public class Cart { // TODO: Move methods related to external files to new class
         processPayment(paymentAmount);
     }
 
-    /**
-     * Returns a string representation of the shopping cart's contents.
-     *
-     * <p>This method returns a string formatted for display as a receipt.</p>
-     *
-     * @return A string representing the current contents of the cart.
-     */
-    @Override
-    public String toString() {
-        return generateReceiptOutput();
-    }
-
-    /**
-     * Generates a formatted string representing the receipt for the current cart contents.
-     *
-     * <p>The receipt includes each product, the quantity purchased, and the total amount.
-     * Note: Receipts will include the date of the purchase in future implementations.</p>
-     *
-     * @return A string representation of the receipt for the cart.
-     */
-    private String generateReceiptOutput() { // TODO: Receipts need to include the date of the purchase at the top
-        StringBuilder outString = new StringBuilder();
-        HashMap<Product, Integer> currentCounts = new HashMap<>();
-        totalAmount = 0.0;
-
-        for (Product product : items) {
-            totalAmount += product.price();
-            currentCounts.put(product, currentCounts.getOrDefault(product, 0) + 1);
-        }
-
-        currentCounts.forEach((product, count) -> outString.append(String.format("[x%d] %s%n", count, product.toString())));
-        outString.append(String.format("\nTotal amount: $%.2f", totalAmount));
-        return outString.toString();
-    }
 
     /**
      * Processes the payment for the current cart contents.
@@ -150,9 +120,10 @@ public class Cart { // TODO: Move methods related to external files to new class
      *
      * @param paymentAmount The amount of money used to pay for the cart items.
      */
-    private void processPayment(double paymentAmount) {
+    private void processPayment(double paymentAmount) { // TODO: Maybe create receipt here then pass to complete?
         if (paymentAmount >= totalAmount) {
-            completePayment(paymentAmount);
+            Receipt receipt = new Receipt(totalAmount,paymentAmount,items);
+            completePayment(receipt);
         } else {
             System.out.println("\nPurchase canceled: Insufficient Funds");
         }
@@ -164,15 +135,10 @@ public class Cart { // TODO: Move methods related to external files to new class
      * <p>This method calculates the change due and prints the receipt, including the payment amount
      * and the total amount spent. After display the receipt, it clears the current cart.</p>
      *
-     * @param paymentAmount The amount of money used to pay for the cart items.
      */
-    private void completePayment(double paymentAmount) {
-        double change = paymentAmount - totalAmount;
-        String receiptOut = generateReceiptOutput() + String.format("\nPayment Amount: $%.2f", paymentAmount) +
-                (change == 0.0 ? "\n" : String.format("\nChange Due: $%.2f", change));
-
-        System.out.println("\n" + receiptOut+"\nPurchase successful!");
-        saveNewReceipt(receiptOut);
+    private void completePayment(Receipt receipt) {
+        System.out.println("\n" + receipt+"\nPurchase successful!");
+        receipt.saveNewReceipt(receipt);
         clearCartItems();
     }
 
@@ -205,77 +171,5 @@ public class Cart { // TODO: Move methods related to external files to new class
                 .orElse(null);
     }
 
-    /**
-     * Saves a new receipt to a file.
-     *
-     * <p>This method attempts to create a new file for the receipt using the current date and time
-     * as the filename. If successful, it writes the receipt data to the file.</p>
-     *
-     * @param newReceiptOutput The receipt data to be saved to the file.
-     */
-    private void saveNewReceipt(String newReceiptOutput) {
-        try {
-            String targetPathFull = FOLDER_PATH + getCurrentDatestamp() + ".txt";
-            createNewFile(targetPathFull);
-            writeToFile(targetPathFull, "Transaction Receipt " + getCurrentDatestamp() + "\n\nPurchased Item(s):\n" + newReceiptOutput);
-        } catch (Exception e) {
-            System.out.println("\nError saving receipt:\n" + e.getMessage());
-        }
-    }
 
-    /**
-     * Creates a new file with the specified name.
-     *
-     * <p>If the file already exists, a message indicating this will be printed.</p>
-     *
-     * @param fileName The name of the file to create.
-     * @throws RuntimeException if an I/O error occurs while creating the file.
-     */
-    private void createNewFile(String fileName) {
-        try {
-            File newFile = new File(fileName);
-            System.out.println("\nFile '" + fileName + "' " + (newFile.createNewFile() ? "Successfully Created" : "Already Exists"));
-        } catch (IOException ex) {
-            System.out.println("Error Creating File " + fileName);
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * Writes the specified data to a file at the given path.
-     *
-     * <p>This method uses a buffered writer to write data to the file.</p>
-     *
-     * @param targetFilePath The path of the file where data will be written.
-     * @param dataToWrite    The data to write to the file.
-     */
-    private void writeToFile(String targetFilePath, String dataToWrite) {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(targetFilePath))) {
-            bufferedWriter.write(dataToWrite);
-            bufferedWriter.flush();
-        } catch (Exception e) {
-            System.out.println("\nError writing to file " + targetFilePath + " " + e.getMessage());
-        }
-    }
-
-    /**
-     * Retrieves the current date and time formatted as a string.
-     *
-     * <p>The date and time are formatted in the pattern "yyyyMMddHHmm", where:
-     * <ul>
-     *   <li>yyyy: Year</li>
-     *   <li>MM: Month</li>
-     *   <li>dd: Day of the month</li>
-     *   <li>HH: Hour in 24-hour format</li>
-     *   <li>mm: Minutes</li>
-     * </ul>
-     * This method is used for generating unique filenames for receipts.</p>
-     *
-     * @return A string representing the current date and time in the specified format.
-     */
-    private String getCurrentDatestamp() {
-        DateTimeFormatter stampFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-        LocalDateTime now = LocalDateTime.now();
-        return now.format(stampFormat);
-    }
 }
