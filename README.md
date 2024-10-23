@@ -80,6 +80,21 @@ Follow these steps to get your application running within IntelliJ IDEA:
 
 #### Adding Multiple Products
 > In addition to the bonus, I also implemented the option for adding multiple amounts of the same item at once, by parsing input for the optional 'amount' int.
+```java
+public void addProductToCart(String productId, Inventory inventory, int amount) {
+        Product product = inventory.findSingleProductById(productId);
+
+        if (product != null) {
+            for (int i = 0; i < amount; i++) {
+                items.add(product);
+            }
+            System.out.printf("\n%s %s been added to your cart.%n", amount > 1 ? (amount + " " + product.name() + "s") :
+            product.name(), amount > 1 ? "have" : "has");
+        } else {
+            System.out.printf("\nProduct with ID '%s' not found.%n", productId);
+        }
+    }
+```
 
 ## Future Work
 
