@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Store {
 
     private static final String PRODUCTS_PATH = "products.csv";
-    private static final ArrayList<Product> INVENTORY = new ArrayList<>();
+    private static final ArrayList<Product> INVENTORY = new ArrayList<>(); // TODO: Use an inventory object, remove static elements from inventory
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final Cart CART = new Cart();
 
