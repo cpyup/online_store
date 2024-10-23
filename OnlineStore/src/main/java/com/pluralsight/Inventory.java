@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory { // TODO: Move loading methods to new class
+public class Inventory {
     private final List<Product> CURRENT_INVENTORY= new ArrayList<>();
 
-    public List<Product> getCurrentInventory() {
-        return CURRENT_INVENTORY;
+    public Product findSingleProductById(String targetId) {
+        return CURRENT_INVENTORY.stream()
+                .filter(product -> product.id().equalsIgnoreCase(targetId))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -73,7 +76,7 @@ public class Inventory { // TODO: Move loading methods to new class
      * @throws NullPointerException if {@code targetInventory} is null.
      */
     public void searchInventoryForId(String targetId) {
-        List<Product> foundProducts = findProductsById(targetId);
+        List<Product> foundProducts = findAllProductsById(targetId);
         if (foundProducts.isEmpty()) {
             System.out.println("\nID Not Found");
         } else {
@@ -117,7 +120,7 @@ public class Inventory { // TODO: Move loading methods to new class
      *         If no products match, an empty list is returned.
      * @throws NullPointerException if {@code targetInventory} is null.
      */
-    private List<Product> findProductsById(String targetId) {
+    private List<Product> findAllProductsById(String targetId) {
         return CURRENT_INVENTORY.stream()
                 .filter(product -> product.id().contains(targetId.toUpperCase()))
                 .toList();

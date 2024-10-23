@@ -4,7 +4,7 @@ package com.pluralsight;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cart { // TODO: Move methods related to external files to new class. If time allows, move everything related to receipts to another class too.
+public class Cart {
     private final List<Product> items = new ArrayList<>();
     private double totalAmount;
 
@@ -17,9 +17,13 @@ public class Cart { // TODO: Move methods related to external files to new class
         return String.format("%.2f",totalAmount);
     }
 
-    private void calculateAmount(){
-        totalAmount = 0;
-        items.forEach(product -> totalAmount += product.price());
+    /**
+     * Checks if the shopping cart is empty.
+     *
+     * @return {@code true} if the cart contains no items, {@code false} otherwise.
+     */
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 
     /**
@@ -35,7 +39,7 @@ public class Cart { // TODO: Move methods related to external files to new class
      * @throws NullPointerException if {@code inventory} is null.
      */
     public void addProductToCart(String productId, Inventory inventory, int amount) {
-        Product product = searchForProductInInventory(productId, inventory);
+        Product product = inventory.findSingleProductById(productId);
 
         if (product != null) {
             for (int i = 0; i < amount; i++) {
@@ -87,15 +91,6 @@ public class Cart { // TODO: Move methods related to external files to new class
     }
 
     /**
-     * Checks if the shopping cart is empty.
-     *
-     * @return {@code true} if the cart contains no items, {@code false} otherwise.
-     */
-    public boolean isEmpty() {
-        return items.isEmpty();
-    }
-
-    /**
      * Processes the checkout for the current shopping cart.
      *
      * <p>If the cart is empty, an error message is displayed. Otherwise, it processes the payment
@@ -111,6 +106,10 @@ public class Cart { // TODO: Move methods related to external files to new class
         processPayment(paymentAmount);
     }
 
+    private void calculateAmount(){
+        totalAmount = 0;
+        items.forEach(product -> totalAmount += product.price());
+    }
 
     /**
      * Processes the payment for the current cart contents.
@@ -153,23 +152,4 @@ public class Cart { // TODO: Move methods related to external files to new class
         totalAmount = 0.0;
         items.clear();
     }
-
-    /**
-     * Searches for a product in the inventory by its ID.
-     *
-     * <p>This method performs a case-insensitive search for a product in the provided inventory list.</p>
-     *
-     * @param id        The ID of the product to search for.
-     * @param inventory The list of available products to search in. This list cannot be null.
-     * @return The {@link Product} if found, or null if not found.
-     * @throws NullPointerException if {@code inventory} is null.
-     */
-    private Product searchForProductInInventory(String id, Inventory inventory) { // TODO: This should be in inventory
-        return inventory.getCurrentInventory().stream()
-                .filter(product -> product.id().equalsIgnoreCase(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-
 }
