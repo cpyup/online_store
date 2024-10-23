@@ -6,12 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory { // TODO: Refactor as an actual object, move loading methods to new class
-    private final List<Product> CURRENT_INVENTORY;
-
-    public Inventory(){
-        CURRENT_INVENTORY = new ArrayList<>();
-    }
+public class Inventory { // TODO: Move loading methods to new class
+    private final List<Product> CURRENT_INVENTORY= new ArrayList<>();
 
     public List<Product> getCurrentInventory() {
         return CURRENT_INVENTORY;

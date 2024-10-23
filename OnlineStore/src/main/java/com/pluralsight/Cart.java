@@ -70,11 +70,9 @@ public class Cart { // TODO: Move methods related to external files to new class
      * @param amount  The number of units of the product to remove. Must be greater than zero.
      */
     public void removeProductFromCart(String productId, int amount) {
-        if (amount <= 0) {
-            amount = 1;
-        }
+        amount = Math.max(amount,1);
 
-        for (int i = 0; i < amount; i++) {
+        for (int i = 0; i < amount; i++) {  // TODO: Make this work for removing multiple, possibly later merge with adding
             if (!items.removeIf(product -> product.id().equalsIgnoreCase(productId))) {
                 System.out.printf("\nNo product found with ID: %s in cart.%n", productId);
                 return;
@@ -200,7 +198,7 @@ public class Cart { // TODO: Move methods related to external files to new class
      * @return The {@link Product} if found, or null if not found.
      * @throws NullPointerException if {@code inventory} is null.
      */
-    private Product searchForProductInInventory(String id, Inventory inventory) {
+    private Product searchForProductInInventory(String id, Inventory inventory) { // TODO: This should be in inventory
         return inventory.getCurrentInventory().stream()
                 .filter(product -> product.id().equalsIgnoreCase(id))
                 .findFirst()
