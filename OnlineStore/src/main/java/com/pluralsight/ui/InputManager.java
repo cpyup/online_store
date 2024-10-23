@@ -1,4 +1,7 @@
-package com.pluralsight;
+package com.pluralsight.ui;
+import com.pluralsight.model.Cart;
+import com.pluralsight.model.Inventory;
+
 import java.util.Scanner;
 
 public class InputManager {

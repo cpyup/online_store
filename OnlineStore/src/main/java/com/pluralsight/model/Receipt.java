@@ -1,4 +1,4 @@
-package com.pluralsight;
+package com.pluralsight.model;
 
 import java.io.BufferedWriter;
 import java.io.File;

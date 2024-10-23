@@ -1,4 +1,8 @@
-package com.pluralsight;
+package com.pluralsight.main;
+
+import com.pluralsight.model.Cart;
+import com.pluralsight.model.Inventory;
+import com.pluralsight.ui.InputManager;
 
 import java.util.Scanner;
 
