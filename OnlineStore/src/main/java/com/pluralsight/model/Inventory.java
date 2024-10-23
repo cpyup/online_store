@@ -80,7 +80,14 @@ public class Inventory {
         if (foundProducts.isEmpty()) {
             System.out.println("\nID Not Found");
         } else {
-            foundProducts.forEach(product -> System.out.println("\n" + product));
+            StringBuilder out = new StringBuilder();
+            out.append("\n");
+            for (Product product : CURRENT_INVENTORY) {
+                if (product.id().contains(targetId.toUpperCase())) {
+                    out.append(product).append("\n");
+                }
+            }
+            System.out.println(out);
         }
     }
 
