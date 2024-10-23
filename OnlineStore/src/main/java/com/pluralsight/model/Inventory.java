@@ -28,7 +28,7 @@ public class Inventory {
      *                        cannot be null.
      * @throws NullPointerException if {@code targetInventory} is null.
      */
-    public void loadProducts(String filePath) {
+    public void loadInventoryProducts(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {

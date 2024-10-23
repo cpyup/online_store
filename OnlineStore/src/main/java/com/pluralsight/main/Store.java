@@ -14,7 +14,7 @@ public class Store {
     private static final Cart CART = new Cart();
 
     public static void main(String[] args) {
-        INVENTORY.loadProducts(PRODUCTS_PATH);
+        INVENTORY.loadInventoryProducts(PRODUCTS_PATH);
 
         int choice = -1;
 
