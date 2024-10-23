@@ -1,6 +1,5 @@
 package com.pluralsight;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class InputManager {
@@ -17,15 +16,15 @@ public class InputManager {
      * @param cart            The user's shopping cart to which products will be added.
      * @throws NullPointerException if {@code targetInventory} or {@code cart} is null.
      */
-    public static void productMenuDisplay(ArrayList<Product> targetInventory, Scanner scanner, Cart cart) {
-        InventoryManager.displayAllProducts(targetInventory);
+    public static void productMenuDisplay(Inventory targetInventory, Scanner scanner, Cart cart) {
+        targetInventory.displayAllProducts();
         String input;
         do {
             System.out.print("\nEnter product ID to add to your cart, 'S' to search, or 'E' to exit: ");
             input = scanner.nextLine().trim();
 
             if ("S".equalsIgnoreCase(input)) {
-                InputManager.inventorySearchDisplay(targetInventory,scanner);
+                inventorySearchDisplay(targetInventory,scanner);
             } else if (!"E".equalsIgnoreCase(input)) {
                 parseAddingInput(targetInventory,input,cart);
             }
@@ -42,10 +41,10 @@ public class InputManager {
      * @param scanner         The scanner for reading user input.
      * @throws NullPointerException if {@code targetInventory} is null.
      */
-    public static void inventorySearchDisplay(ArrayList<Product> targetInventory, Scanner scanner){
+    public static void inventorySearchDisplay(Inventory targetInventory, Scanner scanner){
         System.out.print("\nEnter the ID to search for: ");
         String targetId = scanner.nextLine().trim();
-        InventoryManager.searchInventoryForId(targetInventory,targetId);
+        targetInventory.searchInventoryForId(targetId);
     }
 
     /**
@@ -133,7 +132,7 @@ public class InputManager {
      * @param cart           The user's shopping cart to which the product will be added.
      * @throws NullPointerException if {@code targetInventory} or {@code cart} is null.
      */
-    private static void parseAddingInput(ArrayList<Product> targetInventory,String input, Cart cart){
+    private static void parseAddingInput(Inventory targetInventory,String input, Cart cart){
         String[] args;
         try{
             args = input.split(" ");

@@ -3,9 +3,19 @@ package com.pluralsight;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class InventoryManager { // TODO: Refactor as an actual object, move loading methods to new class
+public class Inventory { // TODO: Refactor as an actual object, move loading methods to new class
+    private final List<Product> CURRENT_INVENTORY;
+
+    public Inventory(){
+        CURRENT_INVENTORY = new ArrayList<>();
+    }
+
+    public List<Product> getCurrentInventory() {
+        return CURRENT_INVENTORY;
+    }
 
     /**
      * Creates products from a specified data file and adds them to the target inventory.
@@ -16,11 +26,10 @@ public class InventoryManager { // TODO: Refactor as an actual object, move load
      *
      * @param filePath        The path to the file containing product data. This file should
      *                        contain product entries in the format: ID|Name|Price.
-     * @param targetInventory The list to which the loaded products will be added. This list
      *                        cannot be null.
      * @throws NullPointerException if {@code targetInventory} is null.
      */
-    public static void loadProducts(String filePath, List<Product> targetInventory) {
+    public void loadProducts(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -28,7 +37,7 @@ public class InventoryManager { // TODO: Refactor as an actual object, move load
                 if (values.length == 3) {
                     Product product = parseProductString(values);
                     if (product != null) {
-                        targetInventory.add(product);
+                        CURRENT_INVENTORY.add(product);
                     }
                 } else {
                     System.out.println("Invalid product line: " + line);
@@ -45,17 +54,16 @@ public class InventoryManager { // TODO: Refactor as an actual object, move load
      * <p>If the inventory is empty, a message indicating that the inventory is empty
      * will be printed. Otherwise, all available products will be printed.</p>
      *
-     * @param currentInventory The list of products to display. This list cannot be null.
      * @throws NullPointerException if {@code currentInventory} is null.
      */
-    public static void displayAllProducts(List<Product> currentInventory) {
-        if (currentInventory.isEmpty()) {
+    public void displayAllProducts() {
+        if (CURRENT_INVENTORY.isEmpty()) {
             System.out.println("\nThe inventory is empty.");
             return;
         }
 
         System.out.println("\nAvailable Products:");
-        currentInventory.forEach(System.out::println);
+        CURRENT_INVENTORY.forEach(System.out::println);
     }
 
     /**
@@ -65,12 +73,11 @@ public class InventoryManager { // TODO: Refactor as an actual object, move load
      * <p>If no products are found, a message indicating that the ID was not found will be printed.
      * Otherwise, the matching products will be displayed.</p>
      *
-     * @param targetInventory The list of products to search through. This list cannot be null.
      * @param targetId       The ID substring to search for in the product IDs.
      * @throws NullPointerException if {@code targetInventory} is null.
      */
-    public static void searchInventoryForId(List<Product> targetInventory, String targetId) {
-        List<Product> foundProducts = findProductsById(targetId, targetInventory);
+    public void searchInventoryForId(String targetId) {
+        List<Product> foundProducts = findProductsById(targetId);
         if (foundProducts.isEmpty()) {
             System.out.println("\nID Not Found");
         } else {
@@ -110,13 +117,12 @@ public class InventoryManager { // TODO: Refactor as an actual object, move load
      *
      * @param targetId      The ID substring to search for within the product IDs.
      *                      This value is converted to uppercase for comparison.
-     * @param targetInventory The list of products to search through. This list cannot be null.
      * @return A list of {@link Product} objects from the inventory whose IDs contain the target ID.
      *         If no products match, an empty list is returned.
      * @throws NullPointerException if {@code targetInventory} is null.
      */
-    private static List<Product> findProductsById(String targetId, List<Product> targetInventory) {
-        return targetInventory.stream()
+    private List<Product> findProductsById(String targetId) {
+        return CURRENT_INVENTORY.stream()
                 .filter(product -> product.id().contains(targetId.toUpperCase()))
                 .toList();
     }

@@ -1,18 +1,17 @@
 package com.pluralsight;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Store {
 
     private static final String PRODUCTS_PATH = "products.csv";
-    private static final ArrayList<Product> INVENTORY = new ArrayList<>(); // TODO: Use an inventory object, remove static elements from inventory
+    private static final Inventory INVENTORY = new Inventory();
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final Cart CART = new Cart();
 
     public static void main(String[] args) {
-        InventoryManager.loadProducts(PRODUCTS_PATH,INVENTORY);
+        INVENTORY.loadProducts(PRODUCTS_PATH);
 
         int choice = -1;
 

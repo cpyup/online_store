@@ -32,7 +32,7 @@ public class Cart { // TODO: Move methods related to external files to new class
      * @param amount  The number of units of the product to add to the cart.
      * @throws NullPointerException if {@code inventory} is null.
      */
-    public void addProductToCart(String productId, List<Product> inventory, int amount) {
+    public void addProductToCart(String productId, Inventory inventory, int amount) {
         Product product = searchForProductInInventory(productId, inventory);
 
         if (product != null) {
@@ -200,8 +200,8 @@ public class Cart { // TODO: Move methods related to external files to new class
      * @return The {@link Product} if found, or null if not found.
      * @throws NullPointerException if {@code inventory} is null.
      */
-    private Product searchForProductInInventory(String id, List<Product> inventory) {
-        return inventory.stream()
+    private Product searchForProductInInventory(String id, Inventory inventory) {
+        return inventory.getCurrentInventory().stream()
                 .filter(product -> product.id().equalsIgnoreCase(id))
                 .findFirst()
                 .orElse(null);
