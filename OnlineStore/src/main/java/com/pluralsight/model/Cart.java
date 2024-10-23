@@ -82,7 +82,8 @@ public class Cart {
 
         for (int i = 0; i < amount; i++) {  // TODO: Make this work for removing multiple, possibly later merge with adding
             if (!items.removeIf(product -> product.id().equalsIgnoreCase(productId))) {
-                System.out.printf("\nNo product found with ID: %s in cart.%n", productId);
+                System.out.printf("\nNo product found with ID: '%s'%n", productId);
+                displayCartContents();
                 return;
             }
         }
@@ -136,7 +137,7 @@ public class Cart {
      *
      */
     private void completePayment(Receipt receipt) {
-        System.out.println("\n" + receipt+"\nPurchase successful!");
+        System.out.println("\nPurchase successful!\n\n" + receipt);
         receipt.saveNewReceipt(receipt);
         clearCartItems();
     }

@@ -132,7 +132,7 @@ public class Receipt {
         }
 
         currentCounts.forEach((product, count) -> outString.append(String.format("[x%d] %s%n", count, product.toString())));
-        outString.append(String.format("\nTotal amount: $%.2f", totalCost));
+        outString.append(String.format("\nTotal Cost: $%.2f", totalCost));
         if(paymentAmount > 0.0){
             outString.append(String.format("\nPayment Amount: $%.2f\nChange Due: $%.2f", paymentAmount,getChange()));
         }
