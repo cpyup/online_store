@@ -17,11 +17,11 @@ public class Inventory {
     }
 
     /**
-     * Creates products from a specified data file and adds them to the target inventory.
+     * Creates products from a specified data file and adds them to the current inventory.
      *
      * <p>This method reads each line of the file, splits the line by the "|" character,
      * and parses the resulting values into {@link Product} objects. Products are added
-     * to the specified inventory list if they contain exactly three values.</p>
+     * to the specified inventory list only if they contain exactly three values.</p>
      *
      * @param filePath        The path to the file containing product data. This file should
      *                        contain product entries in the format: ID|Name|Price.
@@ -53,7 +53,6 @@ public class Inventory {
      * <p>If the inventory is empty, a message indicating that the inventory is empty
      * will be printed. Otherwise, all available products will be printed.</p>
      *
-     * @throws NullPointerException if {@code currentInventory} is null.
      */
     public void displayAllProducts() {
         if (CURRENT_INVENTORY.isEmpty()) {
@@ -66,14 +65,13 @@ public class Inventory {
     }
 
     /**
-     * Searches the inventory for products with IDs that contain the specified target ID
+     * Searches the current inventory for products with IDs that contain the specified target ID
      * and displays the results to the console.
      *
      * <p>If no products are found, a message indicating that the ID was not found will be printed.
      * Otherwise, the matching products will be displayed.</p>
      *
      * @param targetId       The ID substring to search for in the product IDs.
-     * @throws NullPointerException if {@code targetInventory} is null.
      */
     public void searchInventoryForId(String targetId) {
         List<Product> foundProducts = findAllProductsById(targetId);
@@ -125,7 +123,6 @@ public class Inventory {
      *                      This value is converted to uppercase for comparison.
      * @return A list of {@link Product} objects from the inventory whose IDs contain the target ID.
      *         If no products match, an empty list is returned.
-     * @throws NullPointerException if {@code targetInventory} is null.
      */
     private List<Product> findAllProductsById(String targetId) {
         return CURRENT_INVENTORY.stream()
