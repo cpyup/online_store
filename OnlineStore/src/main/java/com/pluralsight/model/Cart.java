@@ -39,6 +39,7 @@ public class Cart {
      * @throws NullPointerException if {@code inventory} is null.
      */
     public void addProductToCart(String productId, Inventory inventory, int amount) {
+        amount = Math.max(1,amount);
         Product product = inventory.findSingleProductById(productId);
 
         if (product != null) {
@@ -72,7 +73,8 @@ public class Cart {
      *
      * <p>This method searches for the product in the cart using its ID. If the product
      * is found, it removes the specified number of units. If the quantity is invalid or
-     * the product is not found, it informs the user accordingly.</p>
+     * the product is not found, it informs the user accordingly.
+     * Note: Currently removes all items regardless of amount passed, will be addressed in a future implementation.</p>
      *
      * @param productId The ID of the product to remove from the cart.
      * @param amount  The number of units of the product to remove. Must be greater than zero.
@@ -92,7 +94,7 @@ public class Cart {
     }
 
     /**
-     * Processes the checkout for the current shopping cart.
+     * Initiates processing the checkout for the current shopping cart.
      *
      * <p>If the cart is empty, an error message is displayed. Otherwise, it processes the payment
      * using the provided amount.</p>
@@ -113,14 +115,14 @@ public class Cart {
     }
 
     /**
-     * Processes the payment for the current cart contents.
+     * Processes a payment for the current cart contents.
      *
      * <p>If the payment amount is sufficient, the payment is completed. Otherwise, an error
      * message is displayed indicating insufficient funds.</p>
      *
      * @param paymentAmount The amount of money used to pay for the cart items.
      */
-    private void processPayment(double paymentAmount) { // TODO: Maybe create receipt here then pass to complete?
+    private void processPayment(double paymentAmount) {
         if (paymentAmount >= totalAmount) {
             Receipt receipt = new Receipt(totalAmount,paymentAmount,items);
             completePayment(receipt);
@@ -132,9 +134,7 @@ public class Cart {
     /**
      * Completes the payment process for a valid transaction and generates a receipt.
      *
-     * <p>This method calculates the change due and prints the receipt, including the payment amount
-     * and the total amount spent. After display the receipt, it clears the current cart.</p>
-     *
+     * <p>After displaying and writing the receipt to file, it clears the current cart.</p>
      */
     private void completePayment(Receipt receipt) {
         System.out.println("\nPurchase successful!\n\n" + receipt);

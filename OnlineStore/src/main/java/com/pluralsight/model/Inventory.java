@@ -65,8 +65,8 @@ public class Inventory {
     }
 
     /**
-     * Searches the current inventory for products with IDs that contain the specified target ID
-     * and displays the results to the console.
+     * Initiates user search of the current inventory for products with IDs that contain the specified target ID
+     * and displays the results found to the console.
      *
      * <p>If no products are found, a message indicating that the ID was not found will be printed.
      * Otherwise, the matching products will be displayed.</p>
@@ -113,9 +113,9 @@ public class Inventory {
     }
 
     /**
-     * Retrieves a list of products from the specified inventory whose IDs contain the given target ID.
+     * Retrieves a list of products from the inventory whose IDs contain the given target ID.
      *
-     * <p>This method filters the products in the provided inventory based on whether their
+     * <p>This method filters the products in the current inventory based on whether their
      * IDs contain the specified target ID, which is converted to uppercase for case-insensitive matching.</p>
      *
      * @param targetId      The ID substring to search for within the product IDs.
