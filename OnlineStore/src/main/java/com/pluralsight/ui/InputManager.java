@@ -6,6 +6,9 @@ import java.util.Scanner;
 
 public class InputManager {
 
+    // Prevent static class instantiation
+    private InputManager(){}
+
     /**
      * Displays the product menu, allowing users to add products to their cart,
      * search for products, or exit the menu.
