@@ -79,10 +79,9 @@ public class Inventory {
             System.out.println("\nID Not Found");
         } else {
             StringBuilder out = new StringBuilder();
-            out.append("\n");
             for (Product product : CURRENT_INVENTORY) {
                 if (product.id().contains(targetId.toUpperCase())) {
-                    out.append(product).append("\n");
+                    out.append("\n").append(product);
                 }
             }
             System.out.println(out);
